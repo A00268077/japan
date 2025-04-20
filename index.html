@@ -1,9 +1,48 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Путеводитель по Токио: 19–24 июня 2025</title>
+    <title>Путеводитель по Японии: 19–26 июня 2025</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; color: #333; }
         h1 { color: #2c3e50; text-align: center; }
@@ -16,193 +55,342 @@
         .section { background: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .cost { font-weight: bold; color: #27ae60; }
         .note { font-style: italic; color: #7f8c8d; }
-		.rank { font-style: italic; color: #ff0000; }
+        .rank { font-style: italic; color: #ff0000; }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { margin: 0 15px; font-size: 18px; }
     </style>
 </head>
 <body>
-    <h1>Путеводитель по Токио: 19–24 июня 2025</h1>
-
-    <div class="section">
-        <h2>Общая информация</h2>
-        <ul>
-            <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/4u7b8MUcNvBPNCQb8">APA Hotel Keikyukamata Ekimae, 4-18-24 Kamata, Ota City, Токио.</a></li>
-            <li><strong>Транспорт</strong>: Метро и поезда (линии Keikyu, JR от Kamata). Купите карту Suica/Pasmo (2,000 JPY, ~12 EUR, депозит 500 JPY). Время и стоимость — по Google Maps/Navitime.</li>
-            <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
-            <li><strong>Бронирование</strong>:
-                <ul>
-                    <li>Mori Art Museum/Tokyo City View: за месяц (официальный сайт).</li>
-                    <li>Shibuya Sky: за месяц, на закат (~19:00, официальный сайт).</li>
-                    <li>teamLab Planets: заранее (сайт teamLab).</li>
-                </ul>
-            </li>
-            <li><strong>Погода</strong>: Сезон дождей (15–25°C, влажно). Зонты, удобная обувь.</li>
-            <li><strong>Питание</strong>: Бюджет 1,000–3,000 JPY (~6–18 EUR). Завтраки: 500–1,500 JPY (~3–9 EUR), японская кухня в приоритете.</li>
-            <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
-            <li><strong>График</strong>: Выезд 8:00–9:00, возврат 21:00–23:00. Завтрак до достопримечательностей, 2–4 места в день, шопинг по пути.</li>
-        </ul>
+    <div class="nav">
+        <a href="#tokyo">Токио</a> |
+        <a href="#fuji">Фудзи</a> |
+        <a href="#kyoto">Киото</a> |
+        <a href="#osaka">Осака</a>
     </div>
 
-    <div class="section">
-        <h2>День 1: 19 июня 2025 (Синдзюку и Икэбукуро)</h2>
-        <h3>Тема: Ночная жизнь, обзорные площадки, манга</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-28-12+Kamata,+Ota+City/11+Naitomachi,+Shinjuku/1+Chome+Nishishinjuku,+Shinjuku/1+Chome+Kabukicho,+Shinjuku/1+Chome-1-5+Nishishinjuku,+Shinjuku/3+Chome+Higashiikebukuro,+Toshima/1+Chome+Higashiikebukuro,+Toshima/3+Chome+Minaminagasaki,+Toshima/4-18-24+Kamata,+Ota+City">Маршрут Дня 1</a></p>
-        <ul>
-            <li><strong>07:30–08:00 – Завтрак (выберите один)</strong>:
-                <ul>
-                    <li><strong><a href="https://maps.app.goo.gl/GHfdjaJXd6mXrLNC8">Sukiya (Kamata) <span class="rank">(3.3)</span></a></strong>: Гюдон (рис с говядиной и луком, 600 JPY, ~3.6 EUR), мисо-суп, маринованные овощи. Адрес: 5-28-12 Kamata, Ota City (5 мин пешком от отеля). Время: 30 мин.</li>
-                    <li><strong><a href="https://maps.app.goo.gl/jhZ4fqAw4WZCKmTbA">Yoshinoya (Kamata) <span class="rank">(3.5)</span></a></strong>: Тэрияки-курица с рисом (650 JPY, ~3.9 EUR), салат, мисо-суп. Адрес: 5-27-14 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li>
-                    <li><strong><a href="https://maps.app.goo.gl/Jpr7NCjnkPLdS2Wg8">YIchiran Shinjuku<span class="rank">(4.4)</span></a></strong>: Рамэн тонкоцу с настраиваемым вкусом (1,000 JPY, ~6 EUR), яйцо, нори. Адрес: 1 Chome-22-7 Kabukicho, Shinjuku (час от отеля; 5 мин от Shinjuku Gyoen). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:00 – Выезд</strong>: Kamata (Keikyu Main Line) → Shinagawa (7 мин) → Shinjuku (JR Yamanote Line, 20 мин). Время: ~30 мин. Стоимость: 450 JPY (~2.7 EUR).</li>
-            <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/SvjW6EZaLLihrZ7X9">Shinjuku Gyoen <span class="rank">(4.6)</span></a></strong>: Парк с японскими садами. Адрес: 11 Naitomachi, Shinjuku. Время: 2 часа. Стоимость: 500 JPY (~3 EUR).</li>
-            <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/XS3UiTeTspueoMc17">Omoide Yokocho <span class="rank">(4.2)</span></a></strong>: Якитори (куриные шашлычки, ~1,500 JPY, ~9 EUR) в Kushikatsu Tanaka. Адрес: 1 Chome Nishishinjuku, Shinjuku. Время: 1 час.</li>
-            <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/Ep4GVPyW8kTo2Zgn7">Shinjuku Golden Gai <span class="rank">(4.3)</span></a></strong>: 200+ ретро-баров. Адрес: 1 Chome Kabukicho, Shinjuku. Время: 2 часа. Стоимость: бесплатно (напитки ~800 JPY, ~4.8 EUR).</li>
-            <li><strong>15:30–17:30 – <a href="https://maps.app.goo.gl/qiLtKEktD9cdxFnH8">Sunshine 60 Tenbou Park <span class="rank">(4.2)</span></a></strong>: Панорама с 251 м. Адрес: 3 Chome Higashiikebukuro, Toshima. Время: 2 часа. Стоимость: 700 JPY (~4.2 EUR). Маршрут: Shinjuku → Ikebukuro (JR Yamanote, 10 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>18:00–19:30 – Ужин в <a href="https://maps.app.goo.gl/iVEDNs191DB8Czur7">Ichiran Ikebukuro <span class="rank">(4.1)</span></a></strong>: Рамэн тонкоцу (1,200 JPY, ~7.2 EUR). Адрес: 1 Chome Higashiikebukuro, Toshima. Время: 1.5 часа.</li>
-            <li><strong>20:00–22:00 – <a href="https://maps.app.goo.gl/SLzsXnV71V6vb8CT9">Tokiwaso Manga Museum <span class="rank">(4.4)</span></a></strong>: Работы Осаму Тэдзуки. Адрес: 3 Chome Minaminagasaki, Toshima. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Пешком ~15 мин или такси (~1,000 JPY, ~6 EUR).</li>
-            <li><strong>22:30 – Возврат</strong>: Ikebukuro → Shinagawa → Kamata (35 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>Шопинг</strong>:
-                <ul>
-                    <li><a href="https://maps.app.goo.gl/jBRhw9N1qmo6RCHv5">Lumine Shinjuku: <span class="rank">(3.7)</span></a> Одежда, кафе. Адрес: 1 Chome-1-5 Nishishinjuku, Shinjuku.</li>
-                    <li><a href="https://maps.app.goo.gl/XZKD4ox2mr1e5thNA">Sunshine City: <span class="rank">(4.1)</span></a> Магазины, аквариум. Адрес: 3 Chome Higashiikebukuro, Toshima.</li>
-                </ul>
-            </li>
-            <li><strong>Общая стоимость</strong>: ~5,850 JPY (~35.1 EUR) с завтраком ~600 JPY.</li>
-        </ul>
+    <div id="tokyo">
+        <h1>Путеводитель по Токио: 19–24 июня 2025</h1>
+
+        <div class="section">
+            <h2>Общая информация</h2>
+            <ul>
+                <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/4u7b8MUcNvBPNCQb8">APA Hotel Keikyukamata Ekimae, 4-18-24 Kamata, Ota City, Токио.</a></li>
+                <li><strong>Транспорт</strong>: Метро и поезда (линии Keikyu, JR от Kamata). Купите карту Suica/Pasmo (2,000 JPY, ~12 EUR, депозит 500 JPY). Время и стоимость — по Google Maps/Navitime.</li>
+                <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
+                <li><strong>Бронирование</strong>:
+                    <ul>
+                        <li>Mori Art Museum/Tokyo City View: за месяц (официальный сайт).</li>
+                        <li>Shibuya Sky: за месяц, на закат (~19:00, официальный сайт).</li>
+                        <li>teamLab Planets: заранее (сайт teamLab).</li>
+                    </ul>
+                </li>
+                <li><strong>Погода</strong>: Сезон дождей (15–25°C, влажно). Зонты, удобная обувь.</li>
+                <li><strong>Питание</strong>: Бюджет 1,000–3,000 JPY (~6–18 EUR). Завтраки: 500–1,500 JPY (~3–9 EUR), японская кухня в приоритете.</li>
+                <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
+                <li><strong>График</strong>: Выезд 8:00–9:00, возврат 21:00–23:00. Завтрак до достопримечательностей, 2–4 места в день, шопинг по пути.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 1: 19 июня 2025 (Синдзюку и Икэбукуро)</h2>
+            <h3>Тема: Ночная жизнь, обзорные площадки, манга</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-28-12+Kamata,+Ota+City/11+Naitomachi,+Shinjuku/1+Chome+Nishishinjuku,+Shinjuku/1+Chome+Kabukicho,+Shinjuku/1+Chome-1-5+Nishishinjuku,+Shinjuku/3+Chome+Higashiikebukuro,+Toshima/1+Chome+Higashiikebukuro,+Toshima/3+Chome+Minaminagasaki,+Toshima/4-18-24+Kamata,+Ota+City">Маршрут Дня 1</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак (выберите один)</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/GHfdjaJXd6mXrLNC8">Sukiya (Kamata) <span class="rank">(3.3)</span></a></strong>: Гюдон (рис с говядиной и луком, 600 JPY, ~3.6 EUR), мисо-суп, маринованные овощи. Адрес: 5-28-12 Kamata, Ota City (5 мин пешком от отеля). Время: 30 мин.</li>
+                        <li><strong><a href="https://maps.app.goo.gl/jhZ4fqAw4WZCKmTbA">Yoshinoya (Kamata) <span class="rank">(3.5)</span></a></strong>: Тэрияки-курица с рисом (650 JPY, ~3.9 EUR), салат, мисо-суп. Адрес: 5-27-14 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li>
+                        <li><strong><a href="https://maps.app.goo.gl/Jpr7NCjnkPLdS2Wg8">Ichiran Shinjuku <span class="rank">(4.4)</span></a></strong>: Рамэн тонкоцу с настраиваемым вкусом (1,000 JPY, ~6 EUR), яйцо, нори. Адрес: 1 Chome-22-7 Kabukicho, Shinjuku (час от отеля; 5 мин от Shinjuku Gyoen). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:00 – Выезд</strong>: Kamata (Keikyu Main Line) → Shinagawa (7 мин) → Shinjuku (JR Yamanote Line, 20 мин). Время: ~30 мин. Стоимость: 450 JPY (~2.7 EUR).</li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/SvjW6EZaLLihrZ7X9">Shinjuku Gyoen <span class="rank">(4.6)</span></a></strong>: Парк с японскими садами. Адрес: 11 Naitomachi, Shinjuku. Время: 2 часа. Стоимость: 500 JPY (~3 EUR).</li>
+                <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/XS3UiTeTspueoMc17">Omoide Yokocho <span class="rank">(4.2)</span></a></strong>: Якитори (куриные шашлычки, ~1,500 JPY, ~9 EUR) в Kushikatsu Tanaka. Адрес: 1 Chome Nishishinjuku, Shinjuku. Время: 1 час.</li>
+                <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/Ep4GVPyW8kTo2Zgn7">Shinjuku Golden Gai <span class="rank">(4.3)</span></a></strong>: 200+ ретро-баров. Адрес: 1 Chome Kabukicho, Shinjuku. Время: 2 часа. Стоимость: бесплатно (напитки ~800 JPY, ~4.8 EUR).</li>
+                <li><strong>15:30–17:30 – <a href="https://maps.app.goo.gl/qiLtKEktD9cdxFnH8">Sunshine 60 Tenbou Park <span class="rank">(4.2)</span></a></strong>: Панорама с 251 м. Адрес: 3 Chome Higashiikebukuro, Toshima. Время: 2 часа. Стоимость: 700 JPY (~4.2 EUR). Маршрут: Shinjuku → Ikebukuro (JR Yamanote, 10 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>18:00–19:30 – Ужин в <a href="https://maps.app.goo.gl/iVEDNs191DB8Czur7">Ichiran Ikebukuro <span class="rank">(4.1)</span></a></strong>: Рамэн тонкоцу (1,200 JPY, ~7.2 EUR). Адрес: 1 Chome Higashiikebukuro, Toshima. Время: 1.5 часа.</li>
+                <li><strong>20:00–22:00 – <a href="https://maps.app.goo.gl/SLzsXnV71V6vb8CT9">Tokiwaso Manga Museum <span class="rank">(4.4)</span></a></strong>: Работы Осаму Тэдзуки. Адрес: 3 Chome Minaminagasaki, Toshima. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Пешком ~15 мин или такси (~1,000 JPY, ~6 EUR).</li>
+                <li><strong>22:30 – Возврат</strong>: Ikebukuro → Shinagawa → Kamata (35 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>Шопинг</strong>:
+                    <ul>
+                        <li><a href="https://maps.app.goo.gl/jBRhw9N1qmo6RCHv5">Lumine Shinjuku <span class="rank">(3.7)</span></a>: Одежда, кафе. Адрес: 1 Chome-1-5 Nishishinjuku, Shinjuku.</li>
+                        <li><a href="https://maps.app.goo.gl/XZKD4ox2mr1e5thNA">Sunshine City <span class="rank">(4.1)</span></a>: Магазины, аквариум. Адрес: 3 Chome Higashiikebukuro, Toshima.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: ~5,850 JPY (~35.1 EUR) с завтраком ~600 JPY.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 2: 20 июня 2025 (Одайба и Тойосу)</h2>
+            <h3>Тема: Футуристическое искусство, статуи, залив</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-20-7+Kamata,+Ota+City/6+Chome-1-16+Toyosu,+Koto+City/6+Chome+Toyosu,+Koto+City/1+Chome+Aomi,+Koto+City/1+Chome-4+Daiba,+Minato/1+Chome+Aomi,+Koto+City/2+Chome-3-6+Aomi,+Koto+City/1+Chome-7-1+Daiba,+Minato/4-18-24+Kamata,+Ota+City">Маршрут Дня 2</a></p>
+            <ul>
+                <li><strong>07:30–08:30 – Завтрак</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/DsXwFUcxJGhukG1XA">Matsuya (Kamata) <span class="rank">(3.5)</span></a></strong>: Гюдон с яйцом (550 JPY, ~3.3 EUR), мисо-суп, салат. Адрес: 5-14-14 Kamata, Ota City (4 мин пешком). Время: 30 мин.</li>
+                        <li><strong><a href="https://maps.app.goo.gl/MpR87aUeexxCXFCV6">Komeda’s Coffee (Kamata) <span class="rank">(3.8)</span></a></strong>: Онигири с лососем и мисо-суп (800 JPY, ~4.8 EUR). Адрес: 5-20-7 Kamata, Ota City (6 мин пешком). Время: 30 мин.</li>
+                        <li><strong><a href="https://maps.app.goo.gl/N2CTPX34efG4M3287">Sushi Zanmai (Toyosu) <span class="rank">(4.7)</span></a></strong>: Набор суши (1,200 JPY, ~7.2 EUR), мисо-суп, чай. Адрес: 6 Chome Toyosu, Koto City (5 мин от teamLab). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:30 – Выезд</strong>: Kamata → Shinagawa → Shimbashi → Toyosu (Yurikamome Line, 45 мин, 600 JPY, ~3.6 EUR).</li>
+                <li><strong>09:30–12:30 – <a href="https://maps.app.goo.gl/dUAuxV6rphYYA6Tn6">teamLab Planets <span class="rank">(4.5)</span></a></strong>: Цифровая выставка. Адрес: 6 Chome-1-16 Toyosu, Koto City. Время: 3 часа. Стоимость: 3,800 JPY (~22.8 EUR).</li>
+                <li><strong>13:00–14:00 – Обед в <a href="https://maps.app.goo.gl/C9G3CsaJeg3mGg9h6">Toyosu Market <span class="rank">(3.9)</span></a></strong>: Сашими (2,000 JPY, ~12 EUR) в Sushi Zanmai. Адрес: 6 Chome Toyosu, Koto City. Время: 1 час.</li>
+                <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/3q9nvAL24Rbko2466">Unicorn Gundam и Statue of Liberty <span class="rank">(4.5)</span></a></strong>: Движущаяся статуя и копия Статуи Свободы. Адрес: 1 Chome Aomi, Koto City; 1 Chome-4 Daiba, Minato. Время: 2 часа. Стоимость: бесплатно. Маршрут: Toyosu → Daiba (Yurikamome, 15 мин, 400 JPY, ~2.4 EUR).</li>
+                <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/TcnU7WNFoT8uRt7L7">Miraikan <span class="rank">(4.1)</span></a></strong>: Музей науки. Адрес: 2 Chome-3-6 Aomi, Koto City. Время: 2 часа. Стоимость: 630 JPY (~3.8 EUR). Маршрут: Daiba → Telecom Center (Yurikamome, 5 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>19:30–21:00 – Ужин в <a href="https://maps.app.goo.gl/1jQnqJ299zCiju1b7">DiverCity Tokyo Plaza <span class="rank">(4.2)</span></a></strong>: Тонкацу (свиная котлета, 1,500 JPY, ~9 EUR) в Tonkatsu Wako. Адрес: 1 Chome Aomi, Koto City. Время: 1.5 часа.</li>
+                <li><strong>21:30 – Возврат</strong>: Daiba → Shimbashi → Shinagawa → Kamata (50 мин, 600 JPY, ~3.6 EUR).</li>
+                <li><strong>Шопинг</strong>:
+                    <ul>
+                        <li><a href="https://maps.app.goo.gl/1jQnqJ299zCiju1b7">DiverCity Tokyo Plaza <span class="rank">(4.2)</span></a>: Аниме-товары. Адрес: 1 Chome Aomi, Koto City.</li>
+                        <li><a href="https://maps.app.goo.gl/PtbZznzP1533nTRp9">Aqua City Odaiba <span class="rank">(4.2)</span></a>: Сувениры. Адрес: 1 Chome-7-1 Daiba, Minato.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: ~10,230 JPY (~61.4 EUR) с завтраком ~600 JPY.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 3: 21 июня 2025 (Сибуя и Харадзюку)</h2>
+            <h3>Тема: Современная культура, шопинг, виды</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-9-12+Kamata,+Ota+City/1-1+Yoyogikamizonocho,+Shibuya/1+Chome+Jingumae,+Shibuya/2+Chome-29-1+Dogenzaka,+Shibuya/3+Chome+Shinjuku,+Shinjuku/2-24-12+Shibuya/24-8+Udagawacho,+Shibuya/4-18-24+Kamata,+Ota+City">Маршрут Дня 3</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/yFFtyQscvd8np85d7">Ramen Hiiki <span class="rank">(4.0)</span></a></strong>: Рамен, 900 JPY, ~5.4 EUR), рис, мисо-суп. Адрес: 5-28-1 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li>
+                        <li><strong><a href="https://maps.app.goo.gl/fDru1bBonUudggRE7">Tsubakiya (Shibuya) <span class="rank">(3.9)</span></a></strong>: Онигири с унаги и мисо-суп (800 JPY, ~4.8 EUR). Адрес: 2 Chome-24-12 Shibuya (10 мин от Meiji Jingu). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Shibuya (JR Yamanote, 30 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/RssXSS6cGUzgCxdh6">Meiji Jingu <span class="rank">(4.6)</span></a></strong>: Синтоистский храм. Адрес: 1-1 Yoyogikamizonocho, Shibuya. Время: 2.5 часа. Стоимость: бесплатно (сад 500 JPY, ~3 EUR, опционально).</li>
+                <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/harAjzM4c2xNPqS58">AFURI Harajuku <span class="rank">(4.2)</span></a></strong>: Такояки (шарики с осьминогом, 1,000 JPY, ~6 EUR) в Gindaco. Адрес: 1 Chome Jingumae, Shibuya. Время: 1 час.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/WhsbEoi7cJPiR6No8">Shibuya Crossing и шопинг <span class="rank">(4.5)</span></a></strong>: Перекресток, магазины (Shibuya 109, Don Quijote). Адрес: 2 Chome-29-1 Dogenzaka, Shibuya. Время: 2 часа. Стоимость: бесплатно.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/fKhabhSbxqwSXVYe8">Hachiko Statue <span class="rank">(4.5)</span></a></strong></li>
+                <li><strong>16:00–16:30 – <a href="https://maps.app.goo.gl/S2be2D4Hr1SSKg9n6">Giant 3D Cat <span class="rank">(4.5)</span></a></strong>: 3D-билборд. Адрес: 3 Chome Shinjuku, Shinjuku. Время: 30 мин. Стоимость: бесплатно. Маршрут: Shibuya → Shinjuku (JR Yamanote, 5 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/7FQ2FxnawkfQtMkX8">Shibuya Sky <span class="rank">(4.6)</span></a></strong>: Обсерватория. Адрес: 2-24-12 Shibuya. Время: 2 часа. Стоимость: 2,200 JPY (~13.2 EUR). Маршрут: Shinjuku → Shibuya (5 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>19:30–21:00 – Ужин в <a href="https://maps.app.goo.gl/wFmuq3zkfETxZsVTA">Tenkazushi Sushi <span class="rank">(4.3)</span></a></strong>: Конвейерные суши (1,500 JPY, ~9 EUR). Адрес: 2-chōme-9-10 Dōgenzaka, Shibuya, Tokyo 150-0043, Japan. Время: 1.5 часа.</li>
+                <li><strong>21:30 – Возврат</strong>: Shibuya → Shinagawa → Kamata (30 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>Шопинг</strong>:
+                    <ul>
+                        <li><a href="https://maps.app.goo.gl/nS7SAYCFALzHPrnZA">Shibuya 109 <span class="rank">(3.9)</span></a>: Мода. Адрес: 2 Chome-29-1 Dogenzaka, Shibuya.</li>
+                        <li><a href="https://maps.app.goo.gl/yTJWP7JYtkCCdi1F9">Shibuya Scramble Square <span class="rank">(4.2)</span></a>: Магазины, кафе. Адрес: 2-24-12 Shibuya.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: ~7,250 JPY (~43.5 EUR) с завтраком ~800 JPY.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 4: 22 июня 2025 (Асакуса и Уэно)</h2>
+            <h3>Тема: Традиции, рынки, история</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-13-15+Kamata,+Ota+City/2+Chome-3-1+Asakusa,+Taito/1+Chome-25-15+Asakusa,+Taito/2+Chome-25-8+Asakusa,+Taito/4+Chome+Ueno,+Taito/7-20+Uenokoen,+Taito/2+Chome-2-4+Asakusa,+Taito/4-18-24+Kamata,+Ota+City">Маршрут Дня 4</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/uDKZ2WcMLBKGmkyE9">Asakusa Mugitoro (Asakusa) <span class="rank">(4.1)</span></a></strong>: Торидон (рис с курицей, 900 JPY, ~5.4 EUR), мисо-суп. Адрес: 2 Chome-2-4 Asakusa, Taito (5 мин от Senso-ji). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Ueno → Asakusa (40 мин, 550 JPY, ~3.3 EUR).</li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/SEVq2BmWVr2fRmu4A">Senso-ji Temple <span class="rank">(4.5)</span></a></strong>: Старейший храм. Адрес: 2 Chome-3-1 Asakusa, Taito. Время: 2 часа. Стоимость: бесплатно.</li>
+                <li><strong>11:30–13:00 – <a href="https://maps.app.goo.gl/tjnjgTbWizQq3Ps1A">Samurai Ninja Museum <span class="rank">(4.9)</span></a></strong>: Интерактивный музей. Адрес: 2 Chome-25-8 Asakusa, Taito. Время: 1.5 часа. Стоимость: 3,000 JPY (~18 EUR).</li>
+                <li><strong>13:30–14:30 – Обед в <a href="https://maps.app.goo.gl/rJrMwDbpvq5xKNWC9">Asakusa <span class="rank">(4.2)</span></a></strong>: Тэмпура (1,500 JPY, ~9 EUR) в Daikokuya. Адрес: 1 Chome-38-10 Asakusa, Taito. Время: 1 час.</li>
+                <li><strong>15:00–17:00 – <a href="https://maps.app.goo.gl/prgRRyM8pUJieF5m7">Ameyoko Market <span class="rank">(4.3)</span></a></strong>: Уличный рынок. Адрес: 4 Chome Ueno, Taito. Время: 2 часа. Стоимость: бесплатно. Маршрут: Asakusa → Ueno (5 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>17:30–19:30 – <a href="https://maps.app.goo.gl/QHnmGaebFy42sjFe6">Akihabara <span class="rank">(4.4)</span></a></strong>: District for electronic and otaku goods. Адрес: Taito City, Tokyo 110-0006. Время: 2 часа.</li>
+                <li><strong>20:00–21:30 – Ужин в <a href="https://maps.app.goo.gl/uDKZ2WcMLBKGmkyE9">Asakusa Mugitoro <span class="rank">(4.1)</span></a></strong>: Унаги-дон (2,000 JPY, ~12 EUR). Адрес: 2 Chome-2-4 Asakusa, Taito. Время: 1.5 часа. Маршрут: Ueno → Asakusa (5 мин, 200 JPY, ~1.2 EUR).</li>
+                <li><strong>22:00 – Возврат</strong>: Asakusa → Ueno → Shinagawa → Kamata (45 мин, 550 JPY, ~3.3 EUR).</li>
+                <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/VAfdBMQgYzfKQ9Er5">Asakusa ROX <span class="rank">(3.8)</span></a>: Сувениры. Адрес: 1 Chome-25-15 Asakusa, Taito.</li>
+                <li><strong>Общая стоимость</strong>: ~8,830 JPY (~53 EUR) с завтраком ~900 JPY.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 5: 23 июня 2025 (Роппонги и Сумида)</h2>
+            <h3>Тема: Искусство, мечи, небоскребы</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-13-12+Kamata,+Ota+City/6-10-1+Roppongi,+Minato/6-10-1+Roppongi,+Minato/2+Chome-25-10+Yokoami,+Sumida/1+Chome-1-2+Oshiage,+Sumida/1+Chome-1-2+Oshiage,+Sumida/4-18-24+Kamata,+Ota+City">Маршрут Дня 5</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/KCEd7puTHW8APcTT6">Gonpachi (Roppongi) <span class="rank">(4.1)</span></a></strong>: Соба с тэмпурой (1,200 JPY, ~7.2 EUR), салат. Адрес: 6-1-2 Roppongi, Minato (5 мин от Mori Art Museum). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Roppongi (35 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/fZvxFTcR89oRiYpWA">Mori Art Museum <span class="rank">(4.3)</span></a></strong>: Современное искусство. Смотровая площадка. Адрес: 6-10-1 Roppongi, Minato. Время: 2.5 часа. Стоимость: 2,000 JPY (~12 EUR).</li>
+                <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/2WNftn8gWTMTSRvz7">Roppongi Hills Tsurutontan <span class="rank">(4.2)</span></a></strong>: Тэрияки-лосось (1,500 JPY, ~9 EUR) в Tsurutontan. Адрес: 6-10-1 Roppongi, Minato. Время: 1 час.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/HQ835EzLRNQzQUTR6">Japanese Sword Museum <span class="rank">(4.0)</span></a></strong>: Самурайские мечи. Адрес: 2 Chome-25-10 Yokoami, Sumida. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR). Маршрут: Roppongi → Ryogoku (15 мин, 300 JPY, ~1.8 EUR).</li>
+                <li><strong>16:00–18:30 – <a href="https://maps.app.goo.gl/mcCWGFfJTXf7TeZ9A">Tokyo Skytree <span class="rank">(4.4)</span></a></strong>: Обсерватория. Адрес: 1 Chome-1-2 Oshiage, Sumida. Время: 2.5 часа. Стоимость: 2,100 JPY (~12.6 EUR).</li>
+                <li><strong>19:00–20:30 – Ужин в <a href="https://maps.app.goo.gl/Fc7RsHKm3FVxAE6a8">Tokyo Solamachi <span class="rank">(4.2)</span></a></strong>: Сукияки (2,000 JPY, ~12 EUR) в Ningyocho Imahan. Адрес: 1 Chome-1-2 Oshiage, Sumida. Время: 1.5 часа.</li>
+                <li><strong>21:00 – Возврат</strong>: Oshiage → Shinagawa → Kamata (40 мин, 550 JPY, ~3.3 EUR).</li>
+                <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/Fc7RsHKm3FVxAE6a8">Tokyo Solamachi <span class="rank">(4.2)</span></a>: Сувениры, аниме. Адрес: 1 Chome-1-2 Oshiage, Sumida.</li>
+                <li><strong>Общая стоимость</strong>: ~9,900 JPY (~59.4 EUR) с завтраком ~700 JPY.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 6: 24 июня 2025 (Тиёда и Ариакэ)</h2>
+            <h3>Тема: Императорская история, миниатюры, Гиндза</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-16-8+Kamata,+Ota+City/1-1+Chiyoda,+Chiyoda/1+Chome+Marunouchi,+Chiyoda/1+Chome-3-33+Ariake,+Koto+City/1+Chome-1-10+Ginza,+Chuo/4+Chome-4-1+Ginza,+Chuo/6+Chome-10-1+Ginza,+Chuo/4-18-24+Kamata,+Ota+City">Маршрут Дня 6</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/HbxDW4qkDRGJQewj8">Shinjuku Nakamuraya (Tokyo Station) <span class="rank">(4.1)</span></a></strong>: Японское карри с курицей (1,000 JPY, ~6 EUR), рис. Адрес: 1 Chome Marunouchi, Chiyoda (5 мин от Imperial Palace). Время: 30 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Tokyo (35 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/YSDeCnnarJHaFNZFA">Imperial Palace <span class="rank">(4.4)</span></a></strong>: Сады и внешний осмотр. Адрес: 1-1 Chiyoda, Chiyoda. Время: 2 часа. Стоимость: бесплатно.</li>
+                <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/8dCJyPCgQyqWR1QEA">Tokyo Station City <span class="rank">(4.1)</span></a></strong>: Рамэн мисо (1,200 JPY, ~7.2 EUR) в Rokurinsha. Адрес: 1 Chome Marunouchi, Chiyoda. Время: 1 час.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/auS2WdWkHUi8aoEx6">ART AQUARIUM MUSEUM <span class="rank">(4.1)</span></a></strong>: Аквариум-выставка. Адрес: 1 Chome-1-10 Ginza, Chuo. Время: 2 часа. Стоимость: 2,300 JPY (~13.8 EUR). Маршрут: Ariake → Shimbashi → Ginza (15 мин, 300 JPY, ~1.8 EUR).</li>
+                <li><strong>16:00–17:30 – <a href="https://maps.app.goo.gl/K7SUQev7H3bekpjb6">small worlds <span class="rank">(4.5)</span></a></strong>: Миниатюры. Адрес: 1 Chome-3-33 Ariake, Koto City. Время: 2 часа. Стоимость: 2,700 JPY (~16.2 EUR). Маршрут: Tokyo → Shimbashi → Ariake (20 мин, 400 JPY, ~2.4 EUR).</li>
+                <li><strong>18:00–19:30 – Ужин в <a href="https://maps.app.goo.gl/uJD7zhBVfbWgLv1m6">Ginza Kagari <span class="rank">(4.2)</span></a></strong>: Рамэн с курицей (1,500 JPY, ~9 EUR). Адрес: 4 Chome-4-1 Ginza, Chuo. Время: 1.5 часа.</li>
+                <li><strong>20:00–21:00 – Шопинг в <a href="https://maps.app.goo.gl/Yf34qqXVCvb576zC9">Ginza Six <span class="rank">(4.0)</span></a></strong>: Люксовые магазины. Адрес: 6 Chome-10-1 Ginza, Chuo. Время: 1 час. Стоимость: бесплатно.</li>
+                <li><strong>21:30 – Возврат</strong>: Ginza → Shinagawa → Kamata (35 мин, 450 JPY, ~2.7 EUR).</li>
+                <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/8dCJyPCgQyqWR1QEA">Tokyo Station City <span class="rank">(4.1)</span></a>: Сувениры. Адрес: 1 Chome Marunouchi, Chiyoda.</li>
+                <li><strong>Общая стоимость</strong>: ~8,950 JPY (~53.7 EUR) с завтраком ~650 JPY.</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>День 2: 20 июня 2025 (Одайба и Тойосу)</h2>
-        <h3>Тема: Футуристическое искусство, статуи, залив</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-20-7+Kamata,+Ota+City/6+Chome-1-16+Toyosu,+Koto+City/6+Chome+Toyosu,+Koto+City/1+Chome+Aomi,+Koto+City/1+Chome-4+Daiba,+Minato/1+Chome+Aomi,+Koto+City/2+Chome-3-6+Aomi,+Koto+City/1+Chome-7-1+Daiba,+Minato/4-18-24+Kamata,+Ota+City">Маршрут Дня 2</a></p>
-        <ul>
-            <li><strong>07:30–08:30 – Завтрак</strong>:
-                <ul>
-                    <li><strong><a href="https://maps.app.goo.gl/DsXwFUcxJGhukG1XA">Matsuya (Kamata)<span class="rank">(3.5)</span></a></strong>: Гюдон с яйцом (550 JPY, ~3.3 EUR), мисо-суп, салат. Адрес: 5-14-14 Kamata, Ota City (4 мин пешком). Время: 30 мин.</li>
-                    <li><strong><a href="https://maps.app.goo.gl/MpR87aUeexxCXFCV6">Komeda’s Coffee (Kamata)<span class="rank">(3.8)</span></a></strong>: Онигири с лососем и мисо-суп (800 JPY, ~4.8 EUR). Адрес: 5-20-7 Kamata, Ota City (6 мин пешком). Время: 30 мин.</li>
-                    <li><strong><a href="https://maps.app.goo.gl/N2CTPX34efG4M3287">Sushi Zanmai (Toyosu)<span class="rank">(4.7)</span></a></strong>: Набор суши (1,200 JPY, ~7.2 EUR), мисо-суп, чай. Адрес: 6 Chome Toyosu, Koto City (5 мин от teamLab). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:30 – Выезд</strong>: Kamata → Shinagawa → Shimbashi → Toyosu (Yurikamome Line, 45 мин, 600 JPY, ~3.6 EUR).</li>
-            <li><strong>09:30–12:30 – <a href="https://maps.app.goo.gl/dUAuxV6rphYYA6Tn6">teamLab Planets<span class="rank">(4.5)</span></a></strong>: Цифровая выставка. Адрес: 6 Chome-1-16 Toyosu, Koto City. Время: 3 часа. Стоимость: 3,800 JPY (~22.8 EUR).</li>
-            <li><strong>13:00–14:00 – <a href="https://maps.app.goo.gl/C9G3CsaJeg3mGg9h6">Обед на Toyosu Market<span class="rank">(3.6-3.9)</span></a></strong>: Сашими (2,000 JPY, ~12 EUR) в Sushi Zanmai. Адрес: 6 Chome Toyosu, Koto City. Время: 1 час.</li>
-            <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/3q9nvAL24Rbko2466">Unicorn Gundam и Statue of Liberty<span class="rank">(4.5)</span></a></strong>: Движущаяся статуя и копия Статуи Свободы. Адрес: 1 Chome Aomi, Koto City; 1 Chome-4 Daiba, Minato. Время: 2 часа. Стоимость: бесплатно. Маршрут: Toyosu → Daiba (Yurikamome, 15 мин, 400 JPY, ~2.4 EUR).</li>
-            <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/TcnU7WNFoT8uRt7L7">Miraikan<span class="rank">(4.1)</span></a></strong>: Музей науки. Адрес: 2 Chome-3-6 Aomi, Koto City. Время: 2 часа. Стоимость: 630 JPY (~3.8 EUR). Маршрут: Daiba → Telecom Center (Yurikamome, 5 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>19:30–21:00 – Ужин в <a href="https://maps.app.goo.gl/1jQnqJ299zCiju1b7">DiverCity Tokyo Plaza<span class="rank">(4.2)</span></a></strong>: Тонкацу (свиная котлета, 1,500 JPY, ~9 EUR) в Tonkatsu Wako. Адрес: 1 Chome Aomi, Koto City. Время: 1.5 часа.</li>
-            <li><strong>21:30 – Возврат</strong>: Daiba → Shimbashi → Shinagawa → Kamata (50 мин, 600 JPY, ~3.6 EUR).</li>
-            <li><strong>Шопинг</strong>:
-                <ul>
-                    <li><a href="https://maps.app.goo.gl/1jQnqJ299zCiju1b7">DiverCity Tokyo Plaza <span class="rank">(4.2)</span></a>: Аниме-товары. Адрес: 1 Chome Aomi, Koto City.</li>
-                    <li><a href="https://maps.app.goo.gl/PtbZznzP1533nTRp9">Aqua City Odaiba <span class="rank">(4.2)</span></a>: Сувениры. Адрес: 1 Chome-7-1 Daiba, Minato.</li>
-                </ul>
-            </li>
-            <li><strong>Общая стоимость</strong>: ~10,230 JPY (~61.4 EUR) с завтраком ~600 JPY.</li>
-        </ul>
+    <div id="fuji">
+        <h1>Путеводитель по Готембе и Фудзи: 25–26 июня 2025</h1>
+
+        <div class="section">
+            <h2>Общая информация</h2>
+            <ul>
+                <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/1q3PqX3y7r3xZ3rK8">Toyoko Inn Gotemba Ekimae, 1988-1 Niihashi, Gotemba, Shizuoka <span class="rank">(4.0)</span></a>.</li>
+                <li><strong>Завтрак</strong>: Включен в отеле (шведский стол, 07:00–09:00): рис, мисо-суп, жареная рыба, тушеные овощи, омлет, салат, натто, чай (~1,000 JPY, ~6 EUR эквивалент). Время: 30 мин.</li>
+                <li><strong>Транспорт</strong>:
+                    <ul>
+                        <li>Переезд 25 июня: Kamata → Gotemba (JR Tokaido Line с пересадкой в Kozu или Odawara).</li>
+                        <li>Местный транспорт: автобусы Fujikyuko (Gotemba → Kawaguchiko), поезд Fujikyuko Line, такси для отдаленных точек.</li>
+                        <li>Карта Suica/Pasmo (2,000 JPY, ~12 EUR, депозит 500 JPY). Работает на JR и Fujikyuko.</li>
+                        <li>Время и стоимость: по Google Maps/Navitime.</li>
+                    </ul>
+                </li>
+                <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
+                <li><strong>Погода</strong>: Сезон дождей (15–25°C, осадки вероятны). Зонты, дождевики, удобная обувь.</li>
+                <li><strong>Видимость Фудзи</strong>: Лучше утром, проверяйте Fuji-san Live Camera. Облака могут закрывать гору.</li>
+                <li><strong>Питание</strong>: Бюджет 1,000–2,500 JPY (~6–15 EUR) на обед/ужин. Японская кухня: удон, якитори, хото, тэмпура.</li>
+                <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
+                <li><strong>График</strong>: 25 июня — вечер после переезда (1–2 точки). 26 июня — выезд 08:00, возврат 21:00–22:00.</li>
+                <li><strong>Бронирование</strong>: Не требуется для указанных достопримечательностей, но уточняйте для музея Кимуры.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 1: 25 июня 2025 (Переезд и Готемба)</h2>
+            <h3>Тема: Аутлет-шопинг, вечерние виды Фудзи</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/1988-1+Niihashi,+Gotemba,+Shizuoka/1312+Fukazawa,+Gotemba,+Shizuoka/1988-1+Niihashi,+Gotemba,+Shizuoka">Маршрут 25 июня</a></p>
+            <ul>
+                <li><strong>08:00–09:00 – Завтрак в APA Hotel (Токио)</strong>: Не включен, возьмите онигири в 7-Eleven Kamata <span class="rank">(3.8)</span> (~300 JPY, ~1.8 EUR) или гюдон в Sukiya Kamata <span class="rank">(3.3)</span> (5-28-12 Kamata, 600 JPY, ~3.6 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–11:30 – Переезд в Готембу</strong>:
+                    <ul>
+                        <li>Маршрут: Kamata → Shinagawa (Keikyu Main Line, 7 мин) → Kozu (JR Tokaido Line, 60 мин) → Gotemba (JR Gotemba Line, 15 мин).</li>
+                        <li>Время: ~2 часа. Стоимость: 1,800 JPY (~10.8 EUR, Suica/Pasmo).</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/EtmdyJobKjhnsjjC8">Sawayaka Gotemba Interchange Branch <span class="rank">(4.2)</span></a> (5 мин пешком от станции Gotemba).</li>
+                    </ul>
+                </li>
+                <li><strong>12:00–13:00 – Обед в Gotemba</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/9k3zYvWvY3zZ3rK8">Torikizoku <span class="rank">(3.9)</span></a></strong>: Якитори (куриные шашлычки, 1,200 JPY, ~7.2 EUR), рис, мисо-суп. Адрес: 1910-1 Niihashi, Gotemba (5 мин пешком от отеля). Время: 1 час.</li>
+                    </ul>
+                </li>
+                <li><strong>13:30–17:00 – <a href="https://maps.app.goo.gl/uUf9bdNt96j5V4sD9">Gotemba Premium Outlets <span class="rank">(4.2)</span></a></strong>:
+                    <ul>
+                        <li>Крупнейший аутлет (Gucci, Nike, Uniqlo). Виды на Фудзи при ясной погоде.</li>
+                        <li>Адрес: 1312 Fukazawa, Gotemba, Shizuoka. Время: 3.5 часа. Стоимость: бесплатно (покупки по желанию).</li>
+                        <li>Маршрут: отель → аутлет (пешком 15 мин или автобус, 200 JPY, ~1.2 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>17:30–19:00 – Ужин в Gotemba</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/gHnkF83QWmxvfg2V7">ETRO Gyukatsu Motomura <span class="rank">(4.7)</span></a></strong>: Говядина сам готовишь (2,000-3000 JPY, ~12-18 EUR), салат, чай. Адрес: 1908-1 Niihashi, Gotemba (5 мин пешком от отеля). Время: 1.5 часа.</li>
+                    </ul>
+                </li>
+                <li><strong>19:30 – Возврат в отель</strong>: Пешком 5 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/uUf9bdNt96j5V4sD9">Gotemba Premium Outlets <span class="rank">(4.2)</span></a>: Одежда, сувениры. Адрес: 1312 Fukazawa, Gotemba.</li>
+                <li><strong>Общая стоимость</strong>: ~4,100 JPY (~24.6 EUR, без покупок в аутлете).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 2: 26 июня 2025 (Озеро Кавагутико и Фудзи)</h2>
+            <h3>Тема: Виды Фудзи, пагода, культура</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/1988-1+Niihashi,+Gotemba,+Shizuoka/1397-1+Arashimacho,+Fujikawaguchiko,+Minamitsume,+Yamanashi/1397-1+Arashimacho,+Fujikawaguchiko/668-2+Funatsu,+Fujikawaguchiko/555+Fujikawaguchiko,+Minamitsume,+Yamanashi/1988-1+Niihashi,+Gotemba,+Shizuoka">Маршрут 26 июня</a></p>
+            <ul>
+                <li><strong>07:00–07:30 – Завтрак в Toyoko Inn</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/1q3PqX3y7r3xZ3rK8">Toyoko Inn Gotemba Ekimae <span class="rank">(4.0)</span></a></strong>: Шведский стол: рис, мисо-суп, жареная скумбрия, тушеный тофу, натто, омлет, салат, зеленый чай. Адрес: 1988-1 Niihashi, Gotemba. Время: 30 мин. Стоимость: включено.</li>
+                    </ul>
+                </li>
+                <li><strong>07:30–08:30 – Выезд к озеру Кавагутико</strong>:
+                    <ul>
+                        <li>Маршрут: Gotemba → Kawaguchiko (Fujikyuko Bus, прямой, 50 мин).</li>
+                        <li>Время: 50 мин. Стоимость: 1,500 JPY (~9 EUR, Suica частично, наличные).</li>
+                    </ul>
+                </li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/q9aoRezQx3TJ1b8z7">Пагода Чурейто <span class="rank">(4.7)</span></a></strong>:
+                    <ul>
+                        <li>Иконический вид на Фудзи с пагодой. 398 ступеней до смотровой.</li>
+                        <li>Адрес: 1397-1 Arashimacho, Fujikawaguchiko, Minamitsume, Yamanashi. Время: 2 часа. Стоимость: бесплатно.</li>
+                        <li>Маршрут: Kawaguchiko Station → Shimoyoshida Station (Fujikyuko Line, 10 мин, 300 JPY, ~1.8 EUR), затем пешком 15 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>11:30–12:30 – Обед в Кавагутико</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/A5r8WDW6PNhvxGCW9">Houtou Fudou <span class="rank">(4.1)</span></a></strong>: Хото (густая лапша с тыквой и овощами, 1,200 JPY, ~7.2 EUR), мисо-суп. Адрес: 707 Kawaguchiko, Fujikawaguchiko. Время: 1 час. Пешком 10 мин от станции Kawaguchiko.</li>
+                    </ul>
+                </li>
+                <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/ZuU7UG8HiUDykdt89">Озеро Кавагутико <span class="rank">(4.5)</span></a></strong>:
+                    <ul>
+                        <li>Прогулка по набережной, виды Фудзи, прокат лодок (опционально, 1,000 JPY, ~6 EUR).</li>
+                        <li>Адрес: 668-2 Funatsu, Fujikawaguchiko. Время: 2 часа. Стоимость: бесплатно.</li>
+                        <li>Маршрут: пешком 10 мин от Houtou Fudou.</li>
+                    </ul>
+                </li>
+                <li><strong>15:30–17:30 – <a href="https://maps.app.goo.gl/trwYs5kksFki5X9S6">Kawaguchiko Museum Music Fores Museum (Музей Кимуры) <span class="rank">(4.3)</span></a></strong>:
+                    <ul>
+                        <li>Картины с видами Фудзи.</li>
+                        <li>Адрес: 3170 Kawaguchiko, Fujikawaguchiko. Время: 2 часа. Стоимость: 800 JPY (~4.8 EUR).</li>
+                        <li>Маршрут: пешком 15 мин или такси (~1,000 JPY, ~6 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>18:00–19:30 – Ужин в Кавагутико</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/PKkX7sjN6j4uUqY16">Fuji Tempura Idaten <span class="rank">(4.2)</span></a></strong>: Тэмпура (креветки, овощи, 1,500 JPY, ~9 EUR), рис, мисо-суп. Адрес: 3486-1 Funatsu, Fujikawaguchiko. Время: 1.5 часа. Пешком 10 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>20:00–21:00 – <a href="https://maps.app.goo.gl/XhU45nyY1hA6Ukvf6">Храм Фудзи Омуро Sengen <span class="rank">(4.3)</span></a></strong>:
+                    <ul>
+                        <li>Синтоистский храм с видом на Фудзи (вечернее освещение).</li>
+                        <li>Адрес: 555 Fujikawaguchiko, Minamitsume, Yamanashi. Время: 1 час. Стоимость: бесплатно.</li>
+                        <li>Маршрут: такси (~1,500 JPY, ~9 EUR) или автобус (20 мин, 300 JPY, ~1.8 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>21:30–22:30 – Возврат в Готембу</strong>:
+                    <ul>
+                        <li>Маршрут: Kawaguchiko → Gotemba (Fujikyuko Bus, 50 мин).</li>
+                        <li>Время: 50 мин. Стоимость: 1,500 JPY (~9 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>Шопинг</strong>: Сувенирные лавки у озера Кавагутико <span class="rank">(4.0)</span>: Онигири, фигурки Фудзи. Адрес: 668-2 Funatsu, Fujikawaguchiko.</li>
+                <li><strong>Общая стоимость</strong>: ~8,600 JPY (~51.6 EUR, без лодок или такси).</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>День 3: 21 июня 2025 (Сибуя и Харадзюку)</h2>
-        <h3>Тема: Современная культура, шопинг, виды</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-9-12+Kamata,+Ota+City/1-1+Yoyogikamizonocho,+Shibuya/1+Chome+Jingumae,+Shibuya/2+Chome-29-1+Dogenzaka,+Shibuya/3+Chome+Shinjuku,+Shinjuku/2-24-12+Shibuya/24-8+Udagawacho,+Shibuya/4-18-24+Kamata,+Ota+City">Маршрут Дня 3</a></p>
-        <ul>
-            <li><strong>07:30–08:00 – Завтрак</strong>:
-                <ul>
-                    <li><strong><a href="https://maps.app.goo.gl/yFFtyQscvd8np85d7">Ramen Hiiki<span class="rank">(4.0)</span></a></strong>: Рамен, 900 JPY, ~5.4 EUR), рис, мисо-суп. Адрес: 5-28-1 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li>
-                    <li><strong><a href="https://maps.app.goo.gl/fDru1bBonUudggRE7">Tsubakiya (Shibuya)<span class="rank">(3.9)</span></a></strong>: Онигири с унаги и мисо-суп (800 JPY, ~4.8 EUR). Адрес: 2 Chome-24-12 Shibuya (10 мин от Meiji Jingu). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Shibuya (JR Yamanote, 30 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/RssXSS6cGUzgCxdh6">Meiji Jingu<span class="rank">(4.6)</span></a></strong>: Синтоистский храм. Адрес: 1-1 Yoyogikamizonocho, Shibuya. Время: 2.5 часа. Стоимость: бесплатно (сад 500 JPY, ~3 EUR, опционально).</li>
-            <li><strong>12:00–13:00 – Обед на <a href="https://maps.app.goo.gl/harAjzM4c2xNPqS58">AFURI Harajuku<span class="rank">(4.2)</span></a></strong>: Такояки (шарики с осьминогом, 1,000 JPY, ~6 EUR) в Gindaco. Адрес: 1 Chome Jingumae, Shibuya. Время: 1 час.</li>
-            <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/WhsbEoi7cJPiR6No8">Shibuya Crossing и шопинг<span class="rank">(4.5)</span></a></strong>: Перекресток, магазины (Shibuya 109, Don Quijote). Адрес: 2 Chome-29-1 Dogenzaka, Shibuya. Время: 2 часа. Стоимость: бесплатно.</li>
-            <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/fKhabhSbxqwSXVYe8">Hachiko Statue<span class="rank">(4.5)</span></a></strong>
-            <li><strong>16:00–16:30 – <a href="https://maps.app.goo.gl/S2be2D4Hr1SSKg9n6">Giant 3D Cat<span class="rank">(4.5)</span></a></strong>: 3D-билборд. Адрес: 3 Chome Shinjuku, Shinjuku. Время: 30 мин. Стоимость: бесплатно. Маршрут: Shibuya → Shinjuku (JR Yamanote, 5 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/7FQ2FxnawkfQtMkX8">Shibuya Sky<span class="rank">(4.6)</span></a></strong>: Обсерватория. Адрес: 2-24-12 Shibuya. Время: 2 часа. Стоимость: 2,200 JPY (~13.2 EUR). Маршрут: Shinjuku → Shibuya (5 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>19:30–21:00 – Ужин в <a href="https://maps.app.goo.gl/wFmuq3zkfETxZsVTA">Tenkazushi Sushi<span class="rank">(4.3)</span></a></strong>: Конвейерные суши (1,500 JPY, ~9 EUR). Адрес: 2-chōme-9-10 Dōgenzaka, Shibuya, Tokyo 150-0043, Japan. Время: 1.5 часа.</li>
-            <li><strong>21:30 – Возврат</strong>: Shibuya → Shinagawa → Kamata (30 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>Шопинг</strong>:
-                <ul>
-                    <li><a href="https://maps.app.goo.gl/nS7SAYCFALzHPrnZA">Shibuya 109<span class="rank">(3.9)</span></a>: Мода. Адрес: 2 Chome-29-1 Dogenzaka, Shibuya.</li>
-                    <li><a href="https://maps.app.goo.gl/yTJWP7JYtkCCdi1F9">Shibuya Scramble Square<span class="rank">(4.2)</span></a>: Магазины, кафе. Адрес: 2-24-12 Shibuya.</li>
-                </ul>
-            </li>
-            <li><strong>Общая стоимость</strong>: ~7,250 JPY (~43.5 EUR) с завтраком ~800 JPY.</li>
-        </ul>
+    <div id="kyoto">
+        <h1>Путеводитель по Киото: Даты уточняются</h1>
+        <div class="section">
+            <h2>Общая информация</h2>
+            <p class="note">Программа для Киото будет добавлена после уточнения дат и планов. Укажите даты пребывания, отель и желаемые достопримечательности (например, храмы, сады, рынки).</p>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>День 4: 22 июня 2025 (Асакуса и Уэно)</h2>
-        <h3>Тема: Традиции, рынки, история</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-13-15+Kamata,+Ota+City/2+Chome-3-1+Asakusa,+Taito/1+Chome-25-15+Asakusa,+Taito/2+Chome-25-8+Asakusa,+Taito/4+Chome+Ueno,+Taito/7-20+Uenokoen,+Taito/2+Chome-2-4+Asakusa,+Taito/4-18-24+Kamata,+Ota+City">Маршрут Дня 4</a></p>
-        <ul>
-            <li><strong>07:30–08:00 – Завтрак</strong>:
-                <ul>
- <!--               <li><strong>Lotteria (Kamata)</strong>: Карри с рисом и курицей (700 JPY, ~4.2 EUR), салат. Адрес: 5-13-15 Kamata, Ota City (3 мин пешком). Время: 30 мин.</li>
-                    <li><strong>Jonathan’s (Kamata)</strong>: Унаги (жареный угорь) с рисом (1,200 JPY, ~7.2 EUR), мисо-суп. Адрес: 5-26-5 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li> -->
-                    <li><strong><a href="https://maps.app.goo.gl/uDKZ2WcMLBKGmkyE9">Asakusa Mugitoro (Asakusa)<span class="rank">(4.1)</span></a></strong>: Торидон (рис с курицей, 900 JPY, ~5.4 EUR), мисо-суп. Адрес: 2 Chome-2-4 Asakusa, Taito (5 мин от Senso-ji). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Ueno → Asakusa (40 мин, 550 JPY, ~3.3 EUR).</li>
-            <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/SEVq2BmWVr2fRmu4A">Senso-ji Temple<span class="rank">(4.5)</span></a></strong>: Старейший храм. Адрес: 2 Chome-3-1 Asakusa, Taito. Время: 2 часа. Стоимость: бесплатно.</li>
-            <li><strong>11:30–13:00 – <a href="https://maps.app.goo.gl/tjnjgTbWizQq3Ps1A">Samurai Ninja Museum<span class="rank">(4.9)</span></a></strong>: Интерактивный музей. Адрес: 2 Chome-25-8 Asakusa, Taito. Время: 1.5 часа. Стоимость: 3,000 JPY (~18 EUR).</li>
-            <li><strong>13:30–14:30 – Обед в <a href="https://maps.app.goo.gl/rJrMwDbpvq5xKNWC9">Asakusa<span class="rank">()</span></a></strong>: Тэмпура (1,500 JPY, ~9 EUR) в Daikokuya. Адрес: 1 Chome-38-10 Asakusa, Taito. Время: 1 час.</li>
-            <li><strong>15:00–17:00 – <a href="https://maps.app.goo.gl/prgRRyM8pUJieF5m7">Ameyoko Market<span class="rank">(4.3)</span></a></strong>: Уличный рынок. Адрес: 4 Chome Ueno, Taito. Время: 2 часа. Стоимость: бесплатно. Маршрут: Asakusa → Ueno (5 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>17:30–19:30 – <a href="https://maps.app.goo.gl/QHnmGaebFy42sjFe6">Akihabara<span class="rank">()</span></a></strong>: District for electronic and otaku goods. Адрес: Taito City, Tokyo 110-0006 Время: 2 часа. </li>
-            <li><strong>20:00–21:30 – Ужин в <a href="https://maps.app.goo.gl/uDKZ2WcMLBKGmkyE9">Asakusa Mugitoro<span class="rank">(4.1)</span></a></strong>: Унаги-дон (2,000 JPY, ~12 EUR). Адрес: 2 Chome-2-4 Asakusa, Taito. Время: 1.5 часа. Маршрут: Ueno → Asakusa (5 мин, 200 JPY, ~1.2 EUR).</li>
-            <li><strong>22:00 – Возврат</strong>: Asakusa → Ueno → Shinagawa → Kamata (45 мин, 550 JPY, ~3.3 EUR).</li>
-            <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/VAfdBMQgYzfKQ9Er5">Asakusa ROX<span class="rank">(3.8)</span></a>: Сувениры. Адрес: 1 Chome-25-15 Asakusa, Taito.</li>
-            <li><strong>Общая стоимость</strong>: ~8,830 JPY (~53 EUR) с завтраком ~900 JPY.</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>День 5: 23 июня 2025 (Роппонги и Сумида)</h2>
-        <h3>Тема: Искусство, мечи, небоскребы</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-13-12+Kamata,+Ota+City/6-10-1+Roppongi,+Minato/6-10-1+Roppongi,+Minato/2+Chome-25-10+Yokoami,+Sumida/1+Chome-1-2+Oshiage,+Sumida/1+Chome-1-2+Oshiage,+Sumida/4-18-24+Kamata,+Ota+City">Маршрут Дня 5</a></p>
-        <ul>
-            <li><strong>07:30–08:00 – Завтрак</strong>:
-                <ul>
-                    <!-- <li><strong>Mos Burger (Kamata)</strong>: Карри с рисом и креветками (700 JPY, ~4.2 EUR), салат. Адрес: 5-13-12 Kamata, Ota City (3 мин пешком). Время: 30 мин.</li>
-                    <li><strong><a href="">Sukiya (Kamata)<span class="rank">()</span></a></strong>: Гюдон с сыром (600 JPY, ~3.6 EUR), мисо-суп. Адрес: 5-28-12 Kamata, Ota City (5 мин пешком). Время: 30 мин.</li>-->
-                    <li><strong><a href="https://maps.app.goo.gl/KCEd7puTHW8APcTT6">Gonpachi (Roppongi)<span class="rank">(4.1)</span></a></strong>: Соба с тэмпурой (1,200 JPY, ~7.2 EUR), салат. Адрес: 6-1-2 Roppongi, Minato (5 мин от Mori Art Museum). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Roppongi (35 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/fZvxFTcR89oRiYpWA">Mori Art Museum<span class="rank">(4.3)</span></a></strong>: Современное искусство. Смотровая площадка Адрес: 6-10-1 Roppongi, Minato. Время: 2.5 часа. Стоимость: 2,000 JPY (~12 EUR).</li>
-            <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/2WNftn8gWTMTSRvz7">Roppongi Hills Tsurutontan<span class="rank">(4.2)</span></a></strong>: Тэрияки-лосось (1,500 JPY, ~9 EUR) в Tsurutontan. Адрес: 6-10-1 Roppongi, Minato. Время: 1 час.</li>
-            <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/HQ835EzLRNQzQUTR6">Japanese Sword Museum<span class="rank">(4.0)</span></a></strong>: Самурайские мечи. Адрес: 2 Chome-25-10 Yokoami, Sumida. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR). Маршрут: Roppongi → Ryogoku (15 мин, 300 JPY, ~1.8 EUR).</li>
-            <li><strong>16:00–18:30 – <a href="https://maps.app.goo.gl/mcCWGFfJTXf7TeZ9A">Tokyo Skytree<span class="rank">(4.4)</span></a></strong>: Обсерватория. Адрес: 1 Chome-1-2 Oshiage, Sumida. Время: 2.5 часа. Стоимость: 2,100 JPY (~12.6 EUR).</li>
-            <li><strong>19:00–20:30 – Ужин в <a href="https://maps.app.goo.gl/Fc7RsHKm3FVxAE6a8">Tokyo Solamachi<span class="rank">(4.2)</span></a></strong>: Сукияки (2,000 JPY, ~12 EUR) в Ningyocho Imahan. Адрес: 1 Chome-1-2 Oshiage, Sumida. Время: 1.5 часа.</li>
-            <li><strong>21:00 – Возврат</strong>: Oshiage → Shinagawa → Kamata (40 мин, 550 JPY, ~3.3 EUR).</li>
-            <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/Fc7RsHKm3FVxAE6a8">Tokyo Solamachi<span class="rank">(4.2)</span></a>: Сувениры, аниме. Адрес: 1 Chome-1-2 Oshiage, Sumida.</li>
-            <li><strong>Общая стоимость</strong>: ~9,900 JPY (~59.4 EUR) с завтраком ~700 JPY.</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>День 6: 24 июня 2025 (Тиёда и Ариакэ)</h2>
-        <h3>Тема: Императорская история, миниатюры, Гиндза</h3>
-        <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/5-16-8+Kamata,+Ota+City/1-1+Chiyoda,+Chiyoda/1+Chome+Marunouchi,+Chiyoda/1+Chome-3-33+Ariake,+Koto+City/1+Chome-1-10+Ginza,+Chuo/4+Chome-4-1+Ginza,+Chuo/6+Chome-10-1+Ginza,+Chuo/4-18-24+Kamata,+Ota+City">Маршрут Дня 6</a></p>
-        <ul>
-            <li><strong>07:30–08:00 – Завтрак</strong>:
-                <ul>
-<!--                    <li><strong><a href="">Sukiya (Kamata)<span class="rank">()</span></a></strong>: Гюдон с яйцом (600 JPY, ~3.6 EUR), мисо-суп. Адрес: 5-16-8 Kamata, Ota City (4 мин пешком). Время: 30 мин.</li>-->
-<!--                    <li><strong><a href="">Matsuya (Kamata)<span class="rank">()</span></a></strong>: Карри с говядиной (650 JPY, ~3.9 EUR), салат. Адрес: 5-14-14 Kamata, Ota City (4 мин пешком). Время: 30 мин.</li>-->
-                    <li><strong><a href="https://maps.app.goo.gl/HbxDW4qkDRGJQewj8">Shinjuku Nakamuraya (Tokyo Station)<span class="rank">(4.1)</span></a></strong>: Японское карри с курицей (1,000 JPY, ~6 EUR), рис. Адрес: 1 Chome Marunouchi, Chiyoda (5 мин от Imperial Palace). Время: 30 мин.</li>
-                </ul>
-            </li>
-            <li><strong>08:00 – Выезд</strong>: Kamata → Shinagawa → Tokyo (35 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/YSDeCnnarJHaFNZFA">Imperial Palace<span class="rank">(4.4)</span></a></strong>: Сады и внешний осмотр. Адрес: 1-1 Chiyoda, Chiyoda. Время: 2 часа. Стоимость: бесплатно.</li>
-            <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/8dCJyPCgQyqWR1QEA">Tokyo Station City<span class="rank">(4.1)</span></a></strong>: Рамэн мисо (1,200 JPY, ~7.2 EUR) в Rokurinsha. Адрес: 1 Chome Marunouchi, Chiyoda. Время: 1 час.</li>
-            <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/auS2WdWkHUi8aoEx6">ART AQUARIUM MUSEUM<span class="rank">(4.1)</span></a></strong>: Аквариум-выставка. Адрес: 1 Chome-1-10 Ginza, Chuo. Время: 2 часа. Стоимость: 2,300 JPY (~13.8 EUR). Маршрут: Ariake → Shimbashi → Ginza (15 мин, 300 JPY, ~1.8 EUR).</li>
-            <li><strong>16:00–17:70 – <a href="https://maps.app.goo.gl/K7SUQev7H3bekpjb6">small worlds<span class="rank">(4.5)</span></a></strong>: Миниатюры. Адрес: 1 Chome-3-33 Ariake, Koto City. Время: 2 часа. Стоимость: 2,700 JPY (~16.2 EUR). Маршрут: Tokyo → Shimbashi → Ariake (20 мин, 400 JPY, ~2.4 EUR).</li>
-            <li><strong>18:00–19:30 – Ужин в <a href="https://maps.app.goo.gl/uJD7zhBVfbWgLv1m6">Ginza Kagari<span class="rank">(4.2)</span></a></strong>: Рамэн с курицей (1,500 JPY, ~9 EUR). Адрес: 4 Chome-4-1 Ginza, Chuo. Время: 1.5 часа.</li>
-            <li><strong>20:00–21:00 – Шопинг в <a href="https://maps.app.goo.gl/Yf34qqXVCvb576zC9">Ginza Six<span class="rank">(4.0)</span></a></strong>: Люксовые магазины. Адрес: 6 Chome-10-1 Ginza, Chuo. Время: 1 час. Стоимость: бесплатно.</li>
-            <li><strong>21:30 – Возврат</strong>: Ginza → Shinagawa → Kamata (35 мин, 450 JPY, ~2.7 EUR).</li>
-            <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/8dCJyPCgQyqWR1QEA">Tokyo Station City<span class="rank">(4.1)</span></a>: Сувениры. Адрес: 1 Chome Marunouchi, Chiyoda.</li>
-            <li><strong>Общая стоимость</strong>: ~8,950 JPY (~53.7 EUR) с завтраком ~650 JPY.</li>
-        </ul>
+    <div id="osaka">
+        <h1>Путеводитель по Осаке: Даты уточняются</h1>
+        <div class="section">
+            <h2>Общая информация</h2>
+            <p class="note">Программа для Осаки будет добавлена после уточнения дат и планов. Укажите даты пребывания, отель и желаемые достопримечательности (например, замок Осаки, Дотонбори, Universal Studios).</p>
+        </div>
     </div>
 
     <div class="section">
@@ -210,15 +398,26 @@
         <p class="note">Ссылки выше ограничены 10 точками. Для полного маршрута с всеми точками:</p>
         <ul>
             <li>1. Откройте <a href="https://www.google.com/maps/d/">Google My Maps</a>.</li>
-            <li>2. Нажмите "Создать новую карту", назовите (например, "Токио День 1").</li>
+            <li>2. Нажмите "Создать новую карту", назовите (например, "Токио День 1" или "Фудзи 26 июня").</li>
             <li>3. Добавьте точки из каждого дня в слой "Места" (введите адреса).</li>
-            <li>4. Создайте слой "Маршрут", соедините точки в порядке посещения (пешком для близких, общественный транспорт для метро).</li>
+            <li>4. Создайте слой "Маршрут", соедините точки в порядке посещения (пешком, автобус, поезд).</li>
             <li>5. Сохраните, нажмите "Поделиться" → "Доступ для всех". Скопируйте ссылку.</li>
-            <li>6. Откройте на телефоне в Google Maps ("Ваши места" → "Карты").</li>
-            <li>7. Для метро используйте Navitime (Google Play/App Store).</li>
+            <li>6. Отправьте ссылки на scvetkov@gmail.com через Gmail.</li>
+            <li>7. Откройте на телефоне в Google Maps ("Ваши места" → "Карты").</li>
+            <li>8. Для метро, автобусов и поездов используйте Navitime (Google Play/App Store).</li>
         </ul>
-        
+        <p class="note">Время: ~5–10 мин на день. Оффлайн: скачайте карты Токио, Готембы/Кавагутико в Google Maps.</p>
     </div>
 
+    <div class="section">
+        <h2>Дополнительные советы</h2>
+        <ul>
+            <li><strong>Видимость Фудзи</strong>: Проверяйте прогноз и Fuji-san Live Camera. Утро 26 июня — лучшее время.</li>
+            <li><strong>Транспорт</strong>: Автобусы Fujikyuko ходят каждые 15–30 мин (Gotemba ↔ Kawaguchiko). Navitime для расписания.</li>
+            <li><strong>Погода</strong>: Зонты, дождевики для сезона дождей. Если дождь сильный, замените пагоду Чурейто на музей Иттику Куботы (745 Kawaguchiko, 1,300 JPY, ~7.8 EUR).</li>
+            <li><strong>Шопинг</strong>: Gotemba Premium Outlets — скидки до 70%. Берите чемодан для покупок.</li>
+            <li><strong>Фото</strong>: Пагода Чурейто — лучшая точка для фото Фудзи. Приезжайте рано, чтобы избежать толпы.</li>
+        </ul>
+    </div>
 </body>
 </html>
