@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Переезды - Путеводитель по Японии</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+    </script>
+    <script src="scripts.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Переезды: Планирование маршрутов</h1>
+    </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="tokyo.html">Токио</a></li>
+            <li><a href="fuji.html">Фудзи</a></li>
+            <li><a href="kyoto.html">Киото</a></li>
+            <li><a href="osaka.html">Осака</a></li>
+            <li><a href="transfers.html">Переезды</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <div class="section">
+            <h2>Обзор</h2>
+            <ul>
+                <li>JR Pass (7-дневный, 50,000 JPY взрослый, 25,000 JPY ребенок) не используется, так как его покупка увеличивает стоимость переездов примерно в 2.5 раза (133,325 JPY против 55,525 JPY). Все билеты покупаются индивидуально в автоматах или офисах JR (карты Visa/Mastercard принимаются).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>18 июня 2025: Haneda Airport → APA Hotel Keikyukamata Ekimae (Токио)</h2>
+            <img src="images/haneda_airport.jpg" alt="Haneda Airport Terminal 3">
+            <ul>
+                <li><strong>Время прибытия</strong>: 18:00, Haneda Airport Terminal 3 (HND). Адрес: <a href="https://maps.app.goo.gl/6zL7Y7nL4kJ9bKxJ6">Haneda Airport, Ota-ku, Tokyo</a>.</li>
+                <li><strong>Транспорт</strong>: Поезд Keikyu Airport Line (наиболее удобный и быстрый вариант для семьи с ребенком, прямой маршрут без пересадок).</li>
+                <li><strong>Маршрут</strong>:
+                    <ul>
+                        <li>Станция: Haneda Airport Terminal 3 (Keikyu Line, платформа 1).</li>
+                        <li>Поезд: Keikyu Airport Express (направление Shinagawa/Asakusa, убедитесь, что поезд идет до Keikyu Kamata).</li>
+                        <li>Остановка: Keikyu Kamata Station (5 остановок: Haneda Airport T1/T2, Anamori-inari, Otorii, Kojiya, Keikyu Kamata).</li>
+                        <li>Время в пути: 13 минут.</li>
+                        <li>Частота: Поезда ходят каждые 5–10 минут (в 18:00–19:00).</li>
+                        <li>Расписание: Пример: 18:05, 18:10, 18:15. Проверьте точное время на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                    </ul>
+                </li>
+                <li><strong>Покупка билетов</strong>:
+                    <ul>
+                        <li>Место: Автоматы на станции Haneda Airport Terminal 3 (Keikyu Line, около выхода из зоны прилета, следуйте указателям «Trains»).</li>
+                        <li>Процесс: Выберите английский язык → «Keikyu Kamata» → оплатите наличными (JPY) или картой Visa/Mastercard (автоматы Keikyu принимают карты).</li>
+                        <li>Стоимость: 300 JPY (взрослый), 150 JPY (ребенок 6–11 лет), бесплатно (ребенок до 6 лет). Итого: 750 JPY (~4.5 EUR) за двоих взрослых и ребенка 12 лет.</li>
+                        <li>Альтернатива: Используйте карту Suica/Pasmo (приобретите в автомате за 2,000 JPY, включая 500 JPY депозит). Приложите карту к турникету на входе и выходе.</li>
+                    </ul>
+                </li>
+                <li><strong>Путь к отелю</strong>:
+                    <ul>
+                        <li>Выход: Keikyu Kamata Station, East Exit (5 метров от платформы).</li>
+                        <li>Маршрут: Пешком 2 минуты (100 метров). Идите прямо по Kamata Ekimae Dori, отель слева.</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/9m7Y7Z3kZ4L5J9K8">APA Hotel Keikyukamata Ekimae, Ota-ku, Kamata 3-19-1, Tokyo</a>.</li>
+                    </ul>
+                </li>
+                <li><strong>Банкоматы Visa/Mastercard</strong>:
+                    <ul>
+                        <li>Haneda Airport Terminal 3: 7-Eleven ATM (2-й этаж, зона прилета, 24/7, <a href="https://maps.app.goo.gl/8kY7Z3kZ4L5J9K8">расположение</a>). Комиссия: ~220 JPY.</li>
+                        <li>Keikyu Kamata Station: Lawson ATM (50 метров от East Exit, <a href="https://maps.app.goo.gl/7Y7Z3kZ4L5J9K8">расположение</a>, 24/7). Комиссия: ~220 JPY.</li>
+                    </ul>
+                </li>
+                <li><strong>Примечания</strong>:
+                    <ul>
+                        <li>Поезда Keikyu в вечерний час пик могут быть переполнены, но багажное место есть у дверей.</li>
+                        <li>Для ребенка: сиденья не гарантированы, держите ребенка за руку на платформе.</li>
+                        <li>Альтернатива: Такси (15 мин, ~2,500 JPY, ~15 EUR), но поезд быстрее и дешевле.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: 750 JPY (~4.5 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>25 июня 2025: APA Hotel Keikyukamata Ekimae → Toyoko Inn Gotemba Ekimae (Готемба)</h2>
+            <img src="images/shinkansen_train.jpg" alt="JR Tokaido Shinkansen Train">
+            <ul>
+                <li><strong>Время выезда</strong>: 08:00 (утро, чтобы прибыть к обеду).</li>
+                <li><strong>Транспорт</strong>: Поезд (JR Tokaido Shinkansen + местный поезд, наиболее комфортный вариант с минимумом ходьбы).</li>
+                <li><strong>Маршрут</strong>:
+                    <ul>
+                        <li><strong>Этап 1: Keikyu Kamata → Shinagawa</strong>
+                            <ul>
+                                <li>Станция: Keikyu Kamata (Keikyu Main Line, платформа 2).</li>
+                                <li>Поезд: Keikyu Airport Express (направление Shinagawa).</li>
+                                <li>Остановка: Shinagawa Station (4 остановки: Omori, Heiwajima, Oimachi, Shinagawa).</li>
+                                <li>Время в пути: 12 минут.</li>
+                                <li>Частота: Каждые 5–7 минут (в 08:00–09:00).</li>
+                                <li>Расписание: Пример: 08:05, 08:10, 08:15. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 300 JPY (взрослый), 150 JPY (ребенок). Итого: 750 JPY (~4.5 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 2: Shinagawa → Odawara</strong>
+                            <ul>
+                                <li>Станция: Shinagawa Station (JR Tokaido Shinkansen, платформы 21–24).</li>
+                                <li>Поезд: JR Tokaido Shinkansen Kodama (направление Nagoya).</li>
+                                <li>Остановка: Odawara Station (2 остановки: Shin-Yokohama, Odawara).</li>
+                                <li>Время в пути: 35 минут.</li>
+                                <li>Частота: Каждые 30 минут (в 08:30–10:00).</li>
+                                <li>Расписание: Пример: 08:40, 09:10. Проверьте на <a href="https://www.jreast.co.jp">JR East</a>.</li>
+                                <li>Стоимость: 3,870 JPY (взрослый, reserved seat), 1,935 JPY (ребенок). Итого: 9,675 JPY (~58 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 3: Odawara → Gotemba</strong>
+                            <ul>
+                                <li>Станция: Odawara Station (JR Gotemba Line, платформа 5).</li>
+                                <li>Поезд: JR Gotemba Line Local (направление Numazu).</li>
+                                <li>Остановка: Gotemba Station (6 остановок: Yugawara, Manazuru, Nebukawa, Kozu, Kamonomiya, Gotemba).</li>
+                                <li>Время в пути: 40 минут.</li>
+                                <li>Частота: Каждые 20–30 минут.</li>
+                                <li>Расписание: Пример: 09:30, 09:50. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 670 JPY (взрослый), 335 JPY (ребенок). Итого: 1,675 JPY (~10 EUR).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Покупка билетов</strong>:
+                    <ul>
+                        <li><strong>Keikyu Kamata → Shinagawa</strong>: Автоматы на Keikyu Kamata Station (английский интерфейс, оплата картой Visa/Mastercard или наличными). Или используйте Suica/Pasmo.</li>
+                        <li><strong>Shinagawa → Odawara</strong>: Покупайте билеты в JR Ticket Office (Shinagawa Station, 2-й этаж, 07:00–21:00) или автоматах (английский интерфейс, карты Visa/Mastercard). Выберите reserved seats для комфорта.</li>
+                        <li><strong>Odawara → Gotemba</strong>: Покупайте билеты в JR Ticket Office (Odawara Station, 1-й этаж, 07:00–20:00) или автоматах (карты Visa/Mastercard).</li>
+                    </ul>
+                </li>
+                <li><strong>Путь к отелю</strong>:
+                    <ul>
+                        <li>Выход: Gotemba Station, Fujisan Exit.</li>
+                        <li>Маршрут: Пешком 2 минуты (150 метров). Идите прямо по Gotemba Ekimae Dori, отель справа.</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/4Z3Y7Z3kZ4L5J9K8">Toyoko Inn Gotemba Ekimae, Niihashi 1894-7, Gotemba, Shizuoka</a>.</li>
+                    </ul>
+                </li>
+                <li><strong>Банкоматы Visa/Mastercard</strong>:
+                    <ul>
+                        <li>Keikyu Kamata Station: Lawson ATM (50 метров от East Exit, 24/7).</li>
+                        <li>Shinagawa Station: 7-Eleven ATM (1-й этаж, около JR Ticket Office, 24/7, <a href="https://maps.app.goo.gl/9Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                        <li>Gotemba Station: Japan Post ATM (100 метров от Fujisan Exit, 09:00–17:00, <a href="https://maps.app.goo.gl/7Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                    </ul>
+                </li>
+                <li><strong>Примечания</strong>:
+                    <ul>
+                        <li>Shinkansen Kodama имеет просторные вагоны, багажное место и сиденья для ребенка.</li>
+                        <li>Альтернатива: Автобус Fujikyu (Shinagawa → Gotemba, 2 часа, 2,000 JPY, но больше ходьбы до остановки).</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: 12,100 JPY (~72.6 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>27 июня 2025: Toyoko Inn Gotemba Ekimae → M's Hotel Sanjo Omiya (Киото)</h2>
+            <img src="images/kyoto_station.jpg" alt="Kyoto Station">
+            <ul>
+                <li><strong>Время выезда</strong>: 08:00 (утро, скоростной поезд).</li>
+                <li><strong>Транспорт</strong>: JR Tokaido Shinkansen (прямой маршрут, максимальная скорость и комфорт).</li>
+                <li><strong>Маршрут</strong>:
+                    <ul>
+                        <li><strong>Этап 1: Gotemba → Odawara</strong>
+                            <ul>
+                                <li>Станция: Gotemba Station (JR Gotemba Line, платформа 1).</li>
+                                <li>Поезд: JR Gotemba Line Local (направление Kozu).</li>
+                                <li>Остановка: Odawara Station (6 остановок: Kamonomiya, Kozu, Nebukawa, Manazuru, Yugawara, Odawara).</li>
+                                <li>Время в пути: 40 минут.</li>
+                                <li>Частота: Каждые 20–30 минут.</li>
+                                <li>Расписание: Пример: 08:05, 08:25. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 670 JPY (взрослый), 335 JPY (ребенок). Итого: 1,675 JPY (~10 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 2: Odawara → Kyoto</strong>
+                            <ul>
+                                <li>Станция: Odawara Station (JR Tokaido Shinkansen, платформы 13–14).</li>
+                                <li>Поезд: JR Tokaido Shinkansen Hikari (направление Shin-Osaka).</li>
+                                <li>Остановка: Kyoto Station (2 остановки: Nagoya, Kyoto).</li>
+                                <li>Время в пути: 2 часа 10 минут.</li>
+                                <li>Частота: Каждые 30–60 минут.</li>
+                                <li>Расписание: Пример: 09:10, 09:40. Проверьте на <a href="https://www.jreast.co.jp">JR East</a>.</li>
+                                <li>Стоимость: 12,710 JPY (взрослый, reserved seat), 6,355 JPY (ребенок). Итого: 31,775 JPY (~190.7 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 3: Kyoto → Omiya</strong>
+                            <ul>
+                                <li>Станция: Kyoto Station (Karasuma Line, платформа 1).</li>
+                                <li>Поезд: Kyoto Subway Karasuma Line (направление Kokusaikaikan).</li>
+                                <li>Остановка: Omiya Station (3 остановки: Kyoto, Shijo, Omiya).</li>
+                                <li>Время в пути: 7 минут.</li>
+                                <li>Частота: Каждые 5–10 минут.</li>
+                                <li>Расписание: Пример: 11:30, 11:35. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 220 JPY (взрослый), 110 JPY (ребенок). Итого: 550 JPY (~3.3 EUR).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Покупка билетов</strong>:
+                    <ul>
+                        <li><strong>Gotemba → Odawara</strong>: Покупайте билеты в JR Ticket Office (Gotemba Station, 07:00–20:00) или автоматах (карты Visa/Mastercard).</li>
+                        <li><strong>Odawara → Kyoto</strong>: Покупайте билеты в JR Ticket Office (Odawara Station, 1-й этаж, 07:00–20:00) или автоматах (английский интерфейс, карты Visa/Mastercard). Выберите reserved seats для комфорта.</li>
+                        <li><strong>Kyoto → Omiya</strong>: Автоматы на Kyoto Station (Karasuma Line, английский интерфейс, карты Visa/Mastercard). Или используйте Suica/Pasmo.</li>
+                    </ul>
+                </li>
+                <li><strong>Саморазогревающаяся еда</strong>:
+                    <ul>
+                        <li><span style="color: red; font-style: italic;">Где купить: Lawson Convenience Store (50 метров от Gotemba Station, Fujisan Exit, <a href="https://maps.app.goo.gl/7Y7Z3kZ4L5J9K8">расположение</a>, 24/7).</span></li>
+                        <li><span style="color: red; font-style: italic;">Что купить: Onigiri Heat-Up (рисовый треугольник с лососем/тунцом, 300–500 JPY), Hot Bento Box (рис, курица, овощи, 800–1,200 JPY). Итого: ~3,000 JPY (~18 EUR) за троих.</span></li>
+                        <li><span style="color: red; font-style: italic;">Как работает: Тяните шнур, еда нагревается за 3–5 минут (инструкция на английском). Безопасно для поезда.</span></li>
+                        <li><span style="color: red; font-style: italic;">Альтернатива: 7-Eleven (100 метров от Gotemba Station, 24/7, <a href="https://maps.app.goo.gl/7Y7Z3kZ4L5J9K8">расположение</a>). Цены аналогичны.</span></li>
+                    </ul>
+                </li>
+                <li><strong>Путь к отелю</strong>:
+                    <ul>
+                        <li>Выход: Omiya Station, Exit 1.</li>
+                        <li>Маршрут: Пешком 3 минуты (200 метров) по Omiya Dori, отель слева.</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">M's Hotel Sanjo Omiya, Nakagyo-ku Aneomiyachonishigawa 77-1, Kyoto</a>.</li>
+                    </ul>
+                </li>
+                <li><strong>Банкоматы Visa/Mastercard</strong>:
+                    <ul>
+                        <li>Gotemba Station: Japan Post ATM (100 метров от Fujisan Exit, 09:00–17:00).</li>
+                        <li>Odawara Station: 7-Eleven ATM (50 метров от West Exit, 24/7, <a href="https://maps.app.goo.gl/7Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                        <li>Kyoto Station: MUFG ATM (Central Exit, 2-й этаж, 07:00–23:00, <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                    </ul>
+                </li>
+                <li><strong>Примечания</strong>:
+                    <ul>
+                        <li>Shinkansen Hikari: просторные вагоны, багажное место, столики для еды.</li>
+                        <li>Для ребенка: зарезервируйте места рядом (укажите в JR Ticket Office).</li>
+                        <li>Саморазогревающаяся еда удобна, но в Shinkansen есть вагон-ресторан (1,000–2,000 JPY за блюдо).</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: 34,000 JPY (~204 EUR, включая метро; еда ~3,000 JPY/~18 EUR оплачивается отдельно).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>5 июля 2025: M's Hotel Sanjo Omiya → Hotel Keihan Yodoyabashi (Осака)</h2>
+            <img src="images/osaka_station.jpg" alt="Osaka Station">
+            <ul>
+                <li><strong>Время выезда</strong>: 08:00 (утро, чтобы прибыть к обеду).</li>
+                <li><strong>Транспорт</strong>: JR Special Rapid Service (быстрый, прямой).</li>
+                <li><strong>Маршрут</strong>:
+                    <ul>
+                        <li><strong>Этап 1: Omiya → Kyoto</strong>
+                            <ul>
+                                <li>Станция: Omiya Station (Karasuma Line, платформа 2).</li>
+                                <li>Поезд: Kyoto Subway Karasuma Line (направление Takeda).</li>
+                                <li>Остановка: Kyoto Station (3 остановки: Omiya, Shijo, Kyoto).</li>
+                                <li>Время в пути: 7 минут.</li>
+                                <li>Частота: Каждые 5–10 минут.</li>
+                                <li>Расписание: Пример: 08:00, 08:05. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 220 JPY (взрослый), 110 JPY (ребенок). Итого: 550 JPY (~3.3 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 2: Kyoto → Osaka</strong>
+                            <ul>
+                                <li>Станция: Kyoto Station (JR Kyoto Line, платформы 8–10).</li>
+                                <li>Поезд: JR Special Rapid Service (направление Osaka).</li>
+                                <li>Остановка: Osaka Station (3 остановки: Takatsuki, Shin-Osaka, Osaka).</li>
+                                <li>Время в пути: 28 минут.</li>
+                                <li>Частота: Каждые 15–20 минут.</li>
+                                <li>Расписание: Пример: 08:30, 08:45. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 560 JPY (взрослый), 280 JPY (ребенок). Итого: 1,400 JPY (~8.4 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 3: Osaka → Yodoyabashi</strong>
+                            <ul>
+                                <li>Станция: Osaka Station (Midosuji Line, платформа 1).</li>
+                                <li>Поезд: Osaka Metro Midosuji Line (направление Namba).</li>
+                                <li>Остановка: Yodoyabashi Station (2 остановки: Umeda, Yodoyabashi).</li>
+                                <li>Время в пути: 5 минут.</li>
+                                <li>Частота: Каждые 5–7 минут.</li>
+                                <li>Расписание: Пример: 09:00, 09:05. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 180 JPY (взрослый), 90 JPY (ребенок). Итого: 450 JPY (~2.7 EUR).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Покупка билетов</strong>:
+                    <ul>
+                        <li><strong>Omiya → Kyoto</strong>: Автоматы на Omiya Station (Karasuma Line, английский интерфейс, карты Visa/Mastercard). Или используйте Suica/Pasmo.</li>
+                        <li><strong>Kyoto → Osaka</strong>: Покупайте билеты в JR Ticket Office (Kyoto Station, Central Exit, 07:00–21:00) или автоматах (карты Visa/Mastercard).</li>
+                        <li><strong>Osaka → Yodoyabashi</strong>: Автоматы на Osaka Station (Midosuji Line, английский интерфейс, карты Visa/Mastercard). Или используйте Suica/Pasmo.</li>
+                    </ul>
+                </li>
+                <li><strong>Путь к отелю</strong>:
+                    <ul>
+                        <li>Выход: Yodoyabashi Station, Exit 1.</li>
+                        <li>Маршрут: Пешком 3 минуты (200 метров) по Kitahama Dori, отель справа.</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">Hotel Keihan Yodoyabashi, Chuo-ku Kitahama 2-4-6, Osaka</a>.</li>
+                    </ul>
+                </li>
+                <li><strong>Банкоматы Visa/Mastercard</strong>:
+                    <ul>
+                        <li>Omiya Station: 7-Eleven ATM (50 метров от выхода, 24/7, <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                        <li>Osaka Station: SMBC ATM (Central Exit, 1-й этаж, 07:00–23:00, <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                    </ul>
+                </li>
+                <li><strong>Примечания</strong>:
+                    <ul>
+                        <li>JR Special Rapid: просторные вагоны, но сиденья не резервируются.</li>
+                        <li>Для ребенка: держите за руку на пересадках в метро.</li>
+                        <li>Альтернатива: Keihan Line (55 мин, 410 JPY), но требует пересадки.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: 2,400 JPY (~14.4 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>12 июля 2025: Hotel Keihan Yodoyabashi → Kansai Airport (Осака)</h2>
+            <img src="images/kansai_airport.jpg" alt="Kansai International Airport">
+            <ul>
+                <li><strong>Время выезда</strong>: 06:00 (чтобы прибыть в аэропорт к 08:00).</li>
+                <li><strong>Транспорт</strong>: JR Haruka Express (прямой, быстрый, комфортный).</li>
+                <li><strong>Маршрут</strong>:
+                    <ul>
+                        <li><strong>Этап 1: Yodoyabashi → Osaka</strong>
+                            <ul>
+                                <li>Станция: Yodoyabashi Station (Midosuji Line, платформа 2).</li>
+                                <li>Поезд: Osaka Metro Midosuji Line (направление Nakamozu).</li>
+                                <li>Остановка: Umeda Station (2 остановки: Yodoyabashi, Umeda).</li>
+                                <li>Время в пути: 5 минут.</li>
+                                <li>Частота: Каждые 5–7 минут.</li>
+                                <li>Расписание: Пример: 06:00, 06:05. Проверьте на <a href="https://www.navitime.co.jp">Navitime</a>.</li>
+                                <li>Стоимость: 180 JPY (взрослый), 90 JPY (ребенок). Итого: 450 JPY (~2.7 EUR).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Этап 2: Osaka → Kansai Airport</strong>
+                            <ul>
+                                <li>Станция: Osaka Station (JR Haruka Express, платформы 11–12).</li>
+                                <li>Поезд: JR Haruka Express (направление Kansai Airport).</li>
+                                <li>Остановка: Kansai Airport Station (1 остановка: Tennoji).</li>
+                                <li>Время в пути: 50 минут.</li>
+                                <li>Частота: Каждые 30 минут.</li>
+                                <li>Расписание: Пример: 06:30, 07:00. Проверьте на <a href="https://www.jreast.co.jp">JR East</a>.</li>
+                                <li>Стоимость: 2,330 JPY (взрослый, unreserved seat), 1,165 JPY (ребенок). Итого: 5,825 JPY (~35 EUR).</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Путь в аэропорту</strong>:
+                    <ul>
+                        <li>Выход: Kansai Airport Station, Terminal 1 Exit.</li>
+                        <li>Маршрут: Пешком 5 минут по крытому переходу в Terminal 1 (зона вылета, 3-й этаж).</li>
+                        <li>Адрес аэропорта: <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">Kansai International Airport, Izumisano, Osaka</a>.</li>
+                        <li>Магазины: Duty-free (Terminal 1, 3-й этаж, 07:00–23:00, косметика, сувениры, еда).</li>
+                    </ul>
+                </li>
+                <li><strong>Покупка билетов</strong>:
+                    <ul>
+                        <li><strong>Yodoyabashi → Osaka</strong>: Автоматы на Yodoyabashi Station (Midosuji Line, английский интерфейс, карты Visa/Mastercard). Или используйте Suica/Pasmo.</li>
+                        <li><strong>Osaka → Kansai Airport</strong>: Покупайте билеты в JR Ticket Office (Osaka Station, Central Exit, 07:00–21:00) или автоматах (карты Visa/Mastercard).</li>
+                    </ul>
+                </li>
+                <li><strong>Банкоматы Visa/Mastercard</strong>:
+                    <ul>
+                        <li>Yodoyabashi Station: Lawson ATM (50 метров от выхода, 24/7, <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                        <li>Osaka Station: SMBC ATM (Central Exit, 1-й этаж, 07:00–23:00).</li>
+                        <li>Kansai Airport: 7-Eleven ATM (Terminal 1, 2-й этаж, 24/7, <a href="https://maps.app.goo.gl/8Y7Z3kZ4L5J9K8">расположение</a>).</li>
+                    </ul>
+                </li>
+                <li><strong>Примечания</strong>:
+                    <ul>
+                        <li>Haruka Express: просторные вагоны, багажное место, идеально для аэропорта.</li>
+                        <li>Для ребенка: unreserved seats дешевле, но берите reserved (2,850 JPY взрослый, 1,425 JPY ребенок) для комфорта.</li>
+                        <li>Альтернатива: Airport Limousine Bus (1 час, 1,600 JPY взрослый, 800 JPY ребенок), но дольше из-за пробок.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: 6,275 JPY (~37.7 EUR).</li>
+            </ul>
+        </div>
+
+        <a href="index.html" class="back-to-top">В начало</a>
+    </div>
+</body>
+</html>
