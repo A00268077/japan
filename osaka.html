@@ -3,299 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Путеводитель по Осаке</title>
+    <title>Осака - Путеводитель по Японии</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+    </script>
+    <script src="scripts.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Путешествие по Японии: Осака</h1>
-        <nav>
+    <div class="header">
+        <h1>Путеводитель по Осаке: 5–12 июля 2025</h1>
+    </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="tokyo.html">Токио</a></li>
+            <li><a href="fuji.html">Фудзи</a></li>
+            <li><a href="kyoto.html">Киото</a></li>
+            <li><a href="osaka.html">Осака</a></li>
+            <li><a href="transfers.html">Переезды</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <div class="section">
+            <h2>Общая информация</h2>
             <ul>
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="fuji.html">Фудзи</a></li>
-                <li><a href="kyoto.html">Киото</a></li>
-                <li><a href="osaka.html">Осака</a></li>
+                <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/8p9kV3zXjY8fQv7y6">Hotel Keihan Yodoyabashi <span class="rank">(4.2)</span></a>. Адрес: 2-4-6 Kitahama, Chuo-ku, Osaka, Osaka Prefecture. Центр, рядом с метро Yodoyabashi.</li>
+                <li><strong>Завтрак</strong>: Не включен в отеле. Бюджет: 300–1,500 JPY (~1.8–9 EUR). Время: 30 мин. Рекомендуются кафе или магазины (Lawson, 7-Eleven) рядом с местами посещения.</li>
+                <li><strong>Транспорт</strong>:
+                    <ul>
+                        <li>Переезд 5 июля: Kyoto → Osaka (JR Tokaido Shinkansen, 15 мин, 1,420 JPY, ~8.5 EUR).</li>
+                        <li>Местный транспорт: Osaka Metro, JR West, карты Suica/Pasmo/ICOCA (2,000 JPY, ~12 EUR, депозит 500 JPY).</li>
+                        <li>Osaka Amazing Pass (1 день, 2,800 JPY, ~16.8 EUR) для метро и достопримечательностей.</li>
+                        <li>Выезд 12 июля: Hotel → Kansai Airport (JR Haruka Express, 50 мин, 2,330 JPY, ~14 EUR).</li>
+                        <li>Время и стоимость: по Google Maps/Navitime.</li>
+                    </ul>
+                </li>
+                <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
+                <li><strong>Погода</strong>: Жарко, влажно (25–33°C). Легкая одежда, солнцезащитный крем, зонты.</li>
+                <li><strong>Питание</strong>: Бюджет 1,000–3,000 JPY (~6–18 EUR) на обед/ужин. Окономияки, такояки, рамен, тэмпура.</li>
+                <li><strong>Google Maps</strong>: Ссылки на маршруты. Используйте Navitime для метро.</li>
+                <li><strong>График</strong>: Выезд 08:00–09:00, возврат 20:00–22:00. 8 июля — легкий день перед ужином.</li>
+                <li><strong>Бронирование</strong>:
+                    <ul>
+                        <li>Universal Studios Japan: за месяц (официальный сайт).</li>
+                        <li>Yotaro Honten: за 1–2 недели.</li>
+                        <li>Турнир сумо: за 2–3 месяца, если доступен (проверить на официальном сайте Japan Sumo Association).</li>
+                    </ul>
+                </li>
             </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div id="osaka" class="city-section">
-            <h1>Путеводитель по Осаке: 5–12 июля 2025</h1>
-
-            <div class="section">
-                <h2>Общая информация</h2>
-                <ul>
-                    <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/8p9kV3zXjY8fQv7y6">Hotel Keihan Yodoyabashi <span class="rank">(4.2)</span></a>. Адрес: 2-4-6 Kitahama, Chuo-ku, Osaka, Osaka Prefecture. Центр, рядом с метро Yodoyabashi.</li>
-                    <li><strong>Завтрак</strong>: Не включен в отеле. Бюджет: 300–1,500 JPY (~1.8–9 EUR). Время: 30 мин. Рекомендуются кафе или магазины (Lawson, 7-Eleven) рядом с местами посещения.</li>
-                    <li><strong>Транспорт</strong>:
-                        <ul>
-                            <li>Переезд 5 июля: Kyoto → Osaka (JR Tokaido Shinkansen, 15 мин, 1,420 JPY, ~8.5 EUR).</li>
-                            <li>Местный транспорт: Osaka Metro, JR West, карты Suica/Pasmo/ICOCA (2,000 JPY, ~12 EUR, депозит 500 JPY).</li>
-                            <li>Osaka Amazing Pass (1 день, 2,800 JPY, ~16.8 EUR) для метро и достопримечательностей.</li>
-                            <li>Выезд 12 июля: Hotel → Kansai Airport (JR Haruka Express, 50 мин, 2,330 JPY, ~14 EUR).</li>
-                            <li>Время и стоимость: по Google Maps/Navitime.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
-                    <li><strong>Погода</strong>: Жарко, влажно (25–33°C). Легкая одежда, солнцезащитный крем, зонты.</li>
-                    <li><strong>Питание</strong>: Бюджет 1,000–3,000 JPY (~6–18 EUR) на обед/ужин. Окономияки, такояки, рамен, тэмпура.</li>
-                    <li><strong>Google Maps</strong>: Ссылки на маршруты. Используйте Navitime для метро.</li>
-                    <li><strong>График</strong>: Выезд 08:00–09:00, возврат 20:00–22:00. 8 июля — легкий день перед ужином.</li>
-                    <li><strong>Бронирование</strong>:
-                        <ul>
-                            <li>Universal Studios Japan: за месяц (официальный сайт).</li>
-                            <li>Yotaro Honten: за 1–2 недели.</li>
-                            <li>Турнир сумо: за 2–3 месяца, если доступен (проверить на официальном сайте Japan Sumo Association).</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 1: 5 июля 2025 (Прибытие и знакомство с Осакой)</h2>
-                <h3>Тема: Городские технологии и гастрономия</h3>
-                <img src="images/dotonbori_street.jpg" alt="Dotonbori Street" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/Kyoto+Station,+Higashishiokoji+Kamadonocho,+Shimogyo-ku,+Kyoto/2-4-6+Kitahama,+Chuo-ku,+Osaka/Dotonbori,+Chuo-ku,+Osaka/2-4-1+Nipponbashi,+Chuo-ku,+Osaka/1-9-7+Umeda,+Kita-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 5 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак в Киото</strong>: Онигири в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Kyoto Station <span class="rank">(4.0)</span></a> (~300 JPY, ~1.8 EUR). Адрес: Higashishiokoji Kamadonocho, Shimogyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–09:30 – Переезд в Осаку</strong>: Kyoto Station → Shin-Osaka (JR Tokaido Shinkansen, 15 мин), Shin-Osaka → Yodoyabashi (Osaka Metro Midosuji Line, 10 мин). Время: 30 мин. Стоимость: 1,600 JPY (~9.6 EUR, Suica).</li>
-                    <li><strong>10:00–10:30 – Заселение</strong>: Hotel Keihan Yodoyabashi. Адрес: 2-4-6 Kitahama, Chuo-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>11:00–12:00 – Обед</strong>: <a href="https://maps.app.goo.gl/buf2jkYfC7HiawRJ8">Okonomiyaki Mizuno <span class="rank">(4.5)</span></a>, окономияки (~1,500 JPY, ~9 EUR). Адрес: 2-4-2 Dotonbori, Chuo-ku, Osaka. Время: 1 час. Маршрут: метро до Namba (Midosuji Line, 5 мин, 180 JPY, ~1.1 EUR).</li>
-                    <li><strong>12:30–15:30 – <a href="https://maps.app.goo.gl/FBATPAUUZbXefanZ7">Dotonbori <span class="rank">(4.4)</span></a></strong>: Яркая улица с неоновыми вывесками, AR-инсталляциями. Адрес: Dotonbori, Chuo-ku, Osaka. Время: 3 часа. Стоимость: бесплатно. Пешком 5 мин.</li>
-                    <li><strong>16:00–18:00 – <a href="https://maps.app.goo.gl/acAo9JvfZGwAKSXKA">Kuromon Market <span class="rank">(4.3)</span></a></strong>: Рынок с уличной едой, такояки (~500 JPY, ~3 EUR). Адрес: 2-4-1 Nipponbashi, Chuo-ku, Osaka. Время: 2 часа. Стоимость: еда по желанию. Пешком 10 мин.</li>
-                    <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/sMHsDZpQbmopqvAK9">Hajime Ramen <span class="rank">(4.6)</span></a>, тонкоцу рамен (~1,200 JPY, ~7.2 EUR). Адрес: 1-9-7 Umeda, Kita-ku, Osaka. Время: 1.5 часа. Маршрут: метро до Umeda (Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>20:30 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
-                    <li><strong>Шопинг</strong>: Dotonbori и Kuromon Market: сувениры, сладости. Адрес: Dotonbori, Chuo-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~5,020 JPY (~30.1 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 2: 6 июля 2025 (Технологии и небоскребы)</h2>
-                <h3>Тема: Современная архитектура и виды города</h3>
-                <img src="images/umeda_sky_building.jpg" alt="Umeda Sky Building" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-1-88+Oyodonaka,+Kita-ku,+Osaka/1-1+Osakajo,+Chuo-ku,+Osaka/5-4-21+Fukushima,+Fukushima-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 6 июля</a></p>
-                <ul>
-                    <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/Nrjt6RAo4zgVavtN9">Morning Cafe Umeda <span class="rank">(4.0)</span></a>, тосты, кофе (~800 JPY, ~4.8 EUR). Адрес: 1-1-87 Oyodonaka, Kita-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Umeda (Osaka Metro Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR). Время: 30 мин.</li>
-                    <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/QChS9VAgUK8rtsVz5">Umeda Sky Building <span class="rank">(4.4)</span></a></strong>: Небоскреб с обсерваторией Floating Garden. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka. Время: 2.5 часа. Стоимость: 1,500 JPY (~9 EUR). Пешком 10 мин.</li>
-                    <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/aGjxbfLmm8gg6Qpf7">Kiji Umeda Sky Building <span class="rank">(4.3)</span></a>, окономияки (~1,300 JPY, ~7.8 EUR). Адрес: 1-1-90 Oyodonaka, Kita-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>14:00–16:30 – <a href="https://maps.app.goo.gl/Qzh8AfZHeYcVoh1r9">Osaka Castle <span class="rank">(4.3)</span></a></strong>: Исторический замок с цифровым музеем. Адрес: 1-1 Osakajo, Chuo-ku, Osaka. Время: 2.5 часа. Стоимость: 600 JPY (~3.6 EUR). Маршрут: метро до Osakajokoen (JR Loop Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
-                    <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/4h6fqdo9w91jiN5A7">Gate Tower Building <span class="rank">(4.1)</span></a></strong>: Здание с автомагистралью. Адрес: 5-4-21 Fukushima, Fukushima-ku, Osaka. Время: 2 часа. Стоимость: бесплатно. Маршрут: метро до Fukushima (JR Loop Line, 10 мин, 180 JPY, ~1.1 EUR).</li>
-                    <li><strong>19:30–21:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/MNjqAcmLMzwf7Jot7">Tonkatsu Ganko <span class="rank">(4.4)</span></a>, тонкацу (~1,800 JPY, ~10.8 EUR). Адрес: 5-6-3 Fukushima, Fukushima-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
-                    <li><strong>21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (10 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Umeda: электроника, одежда. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~5,950 JPY (~35.7 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 3: 7 июля 2025 (Развлечения и природа)</h2>
-                <h3>Тема: Интерактивные технологии и релакс</h3>
-                <img src="images/nifrel_aquazoo.jpg" alt="NIFREL Aquazoo" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-1+Nifrel,+Suita,+Osaka/1-18+Minookoen,+Minoo,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 7 июля</a></p>
-                <ul>
-                    <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/Qsxj3n5Gx7xJBfjU7">Cafe Esaka <span class="rank">(4.1)</span></a>, сэндвичи, чай (~700 JPY, ~4.2 EUR). Адрес: 1-23-16 Esaka-cho, Suita, Osaka. Время: 30 мин.</li>
-                    <li><strong>08:30–09:30 – Выезд</strong>: Yodoyabashi → Esaka (Midosuji Line, 15 мин), затем автобус до NIFREL (15 мин, 600 JPY, ~3.6 EUR). Время: 1 час.</li>
-                    <li><strong>10:00–13:00 – <a href="https://maps.app.goo.gl/Zg9JAUBJ3bLyhf3t9">Interactive Aquazoo NIFREL <span class="rank">(4.2)</span></a></strong>: Интерактивный аквариум с AR-экспонатами. Адрес: 2-1 Nifrel, Suita, Osaka. Время: 3 часа. Стоимость: 2,000 JPY (~12 EUR).</li>
-                    <li><strong>13:30–14:30 – Обед</strong>: <a href="https://maps.app.goo.gl/TsBwEoNennZV9GKs6">Sushi Hanamaru <span class="rank">(4.0)</span></a>, суши (~1,500 JPY, ~9 EUR). Адрес: 2-1-1 Senribanpaku, Suita, Osaka. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>15:00–18:00 – <a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoo Park <span class="rank">(4.4)</span></a></strong>: Природный парк с водопадом. Адрес: 1-18 Minookoen, Minoo, Osaka. Время: 3 часа. Стоимость: бесплатно. Маршрут: автобус до Hankyu Minoo Station (30 мин, 400 JPY, ~2.4 EUR), пешком 15 мин.</li>
-                    <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoh Kappo <span class="rank">(4.3)</span></a>, удон (~1,200 JPY, ~7.2 EUR). Адрес: 1-1-1 Minoo, Minoo, Osaka. Время: 1.5 часа. Пешком 10 мин.</li>
-                    <li><strong>20:30–21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (40 мин, 600 JPY, ~3.6 EUR).</li>
-                    <li><strong>Шопинг</strong>: NIFREL: сувениры. Адрес: 2-1 Nifrel, Suita, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~7,000 JPY (~42 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 4: 8 июля 2025 (Легкий день перед ужином)</h2>
-                <h3>Тема: Культура и релакс</h3>
-                <img src="images/sumiyoshi_taisha.jpg" alt="Sumiyoshi Taisha Shrine" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-9-89+Sumiyoshi,+Sumiyoshi-ku,+Osaka/2-9-19+Motomachi,+Naniwa-ku,+Osaka/2-3-14+Koraibashi,+Chuo-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 8 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/MjBwr4jA1Fk1hhHw6">Sumiyoshi Cafe <span class="rank">(4.0)</span></a>, выпечка, кофе (~600 JPY, ~3.6 EUR). Адрес: 2-9-90 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Sumiyoshi Taisha (Nankai Line, 20 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
-                    <li><strong>09:30–11:30 – <a href="https://maps.app.goo.gl/8LHC7YR4oJAtCCjt6">Sumiyoshi Taisha Shrine <span class="rank">(4.5)</span></a></strong>: Синтоистский храм с арочным мостом. Адрес: 2-9-89 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 2 часа. Стоимость: бесплатно.</li>
-                    <li><strong>12:00–13:00 – Обед</strong>: <a href="https://maps.app.goo.gl/rXa98YbdsN83LYALA">Sumiyoshi Ramen <span class="rank">(4.2)</span></a>, рамен (~1,000 JPY, ~6 EUR). Адрес: 2-10-1 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/CPVcZN9xdovz6dUb7">Namba Yasaka Shrine <span class="rank">(4.3)</span></a></strong>: Храм с львиной головой. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka. Время: 2 часа. Стоимость: бесплатно. Маршрут: метро до Namba (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
-                    <li><strong>16:00–17:00 – Отдых в отеле</strong>: Подготовка к ужину. Время: 1 час. Маршрут: метро до Yodoyabashi (10 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>17:30–19:30 – Ужин</strong>: <a href="https://maps.app.goo.gl/qrEr8bE3uCoEtNyGA">Yotaro Honten Tempura <span class="rank">(4.6)</span></a>, тэмпура (~3,000 JPY, ~18 EUR). Адрес: 2-3-14 Koraibashi, Chuo-ku, Osaka. Время: 2 часа. Пешком 10 мин.</li>
-                    <li><strong>20:00 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
-                    <li><strong>Шопинг</strong>: Namba: сувениры. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~5,160 JPY (~31 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 5: 9 июля 2025 (История и торговля)</h2>
-                <h3>Тема: Культура и шопинг</h3>
-                <img src="images/shitennoji_temple.jpg" alt="Shitennoji Temple" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-11-18+Shitennoji,+Tennoji-ku,+Osaka/5-6+Tenjinbashi,+Kita-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 9 июля</a></p>
-                <ul>
-                    <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/N9Ys3GTScH8VfbxSA">Tennoji Bakery <span class="rank">(4.1)</span></a>, круассаны, сок (~600 JPY, ~3.6 EUR). Адрес: 1-11-19 Shitennoji, Tennoji-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Tennoji (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
-                    <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/CTFLanPoUE4DeCek8">Shitennoji Temple <span class="rank">(4.3)</span></a></strong>: Старейший буддийский храм. Адрес: 1-11-18 Shitennoji, Tennoji-ku, Osaka. Время: 2.5 часа. Стоимость: 300 JPY (~1.8 EUR).</li>
-                    <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/FxkFBifdDyUuRzWe9">Kushikatsu Daruma <span class="rank">(4.4)</span></a>, кушикатсу (~1,500 JPY, ~9 EUR). Адрес: 1-6-12 Shitennoji, Tennoji-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>14:00–17:00 – <a href="https://maps.app.goo.gl/7Jp4ZyaeqBCTFts26">Tenjinbashisuji Shotengai <span class="rank">(4.2)</span></a></strong>: Торговая улица. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka. Время: 3 часа. Стоимость: бесплатно. Маршрут: метро до Tenjimbashisuji 6-chome (Tanimachi Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
-                    <li><strong>17:30–19:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/9SDmnriNtbPKZaE46">Takoyaki Juhachi <span class="rank">(4.3)</span></a>, такояки (~800 JPY, ~4.8 EUR). Адрес: 5-5-1 Tenjinbashi, Kita-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
-                    <li><strong>19:30–20:00 – Возврат в отель</strong>: Метро до Yodoyabashi (15 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Tenjinbashisuji: электроника, сувениры. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~4,000 JPY (~24 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 6: 10 июля 2025 (Universal Studios Japan)</h2>
-                <h3>Тема: Технологии и развлечения</h3>
-                <img src="images/universal_studios_japan.jpg" alt="Universal Studios Japan" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-1-33+Sakurajima,+Konohana-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 10 июля</a></p>
-                <ul>
-                    <li><strong>07:00–07:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/ZPk72nDMJaS4RHmy8">City Cafe Universal <span class="rank">(4.0)</span></a>, блины, кофе (~1,000 JPY, ~6 EUR). Адрес: 2-1-25 Sakurajima, Konohana-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>07:30–08:30 – Выезд</strong>: Yodoyabashi → Universal City (JR Yumesaki Line, 30 мин, 360 JPY, ~2.2 EUR). Время: 1 час.</li>
-                    <li><strong>09:00–18:00 – <a href="https://maps.app.goo.gl/iyQmm8bE1YoszXxw6">Universal Studios Japan <span class="rank">(4.5)</span></a></strong>: Тематический парк (Super Nintendo World, VR-игры). Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka. Время: 9 часов. Стоимость: 8,600 JPY (~51.6 EUR).</li>
-                    <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/fqHMx7FourQt8eJB9">Hard Rock Cafe Osaka <span class="rank">(4.2)</span></a>, бургеры (~2,000 JPY, ~12 EUR). Адрес: 2-1-24 Sakurajima, Konohana-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
-                    <li><strong>20:30–21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (30 мин, 360 JPY, ~2.2 EUR).</li>
-                    <li><strong>Шопинг</strong>: Universal Studios: сувениры. Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~12,680 JPY (~76 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 7: 11 июля 2025 (Спорт и панорамы)</h2>
-                <h3>Тема: Традиции и современность</h3>
-                <img src="images/abeno_harukas.jpg" alt="Abeno Harukas" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-1-43+Abenosuji,+Abeno-ku,+Osaka/1-18-6+Ebisuhigashi,+Naniwa-ku,+Osaka/3-4-36+Namba-naka,+Naniwa-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 11 июля</a></p>
-                <ul>
-                    <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/d5fsJXtCpx9HYbdF7">Abeno Coffee <span class="rank">(4.0)</span></a>, тосты, чай (~700 JPY, ~4.2 EUR). Адрес: 1-1-44 Abenosuji, Abeno-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Tennoji (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
-                    <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/FwypiHQrCo26tjiv5">Abeno Harukas <span class="rank">(4.3)</span></a></strong>: Небоскреб с обсерваторией. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka. Время: 2.5 часа. Стоимость: 1,800 JPY (~10.8 EUR).</li>
-                    <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/QguM1F9qUe3xTHm77">Tendon Tenya <span class="rank">(4.1)</span></a>, тэмпура (~1,200 JPY, ~7.2 EUR). Адрес: 1-2-1 Abenosuji, Abeno-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>14:00–16:30 – <a href="https://maps.app.goo.gl/JNVmDp7k8ppZ52FY9">Tsutenkaku Tower <span class="rank">(4.0)</span></a></strong>: Ретро-башня с VR-экспозицией. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka. Время: 2.5 часа. Стоимость: 900 JPY (~5.4 EUR). Маршрут: метро до Ebisucho (Sakaisuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>17:00–19:00 – Турнир сумо (если доступен)</strong>: <a href="https://maps.app.goo.gl/hejcq8SjK5TpgaAJ7">Osaka Prefectural Gymnasium <span class="rank">(4.2)</span></a>, турнир сумо (~3,000 JPY, ~18 EUR). Адрес: 3-4-36 Namba-naka, Naniwa-ku, Osaka. Время: 2 часа. Маршрут: метро до Namba (Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>19:30–21:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/ZDsAaomLDYQZE4uT7">Ichiran Namba <span class="rank">(4.5)</span></a>, рамен (~1,500 JPY, ~9 EUR). Адрес: 3-5-1 Namba-naka, Naniwa-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
-                    <li><strong>21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (15 мин, 240 JPY, ~1.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Abeno Harukas: одежда, электроника. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka.</li>
-                    <li><strong>Общая стоимость</strong>: ~10,100 JPY (~60.6 EUR, с сумо; ~7,100 JPY без сумо).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 8: 12 июля 2025 (Отъезд)</h2>
-                <h3>Тема: Трансфер в аэропорт</h3>
-                <img src="images/kansai_airport.jpg" alt="Kansai International Airport" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/Kansai+International+Airport,+Izumisano,+Osaka+Prefecture">Маршрут 12 июля</a></p>
-                <ul>
-                    <li><strong>07:00–07:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/c1JuWJhtjrxY73M76">Kitahama Cafe <span class="rank">(4.0)</span></a>, йогурт, кофе (~800 JPY, ~4.8 EUR). Адрес: 2-4-7 Kitahama, Chuo-ku, Osaka. Время: 30 мин.</li>
-                    <li><strong>07:30–08:30 – Сборы и выезд</strong>: Время: 1 час.</li>
-                    <li><strong>08:30–09:30 – Трансфер в аэропорт</strong>: Yodoyabashi → Kansai Airport (JR Haruka Express, 50 мин, 2,330 JPY, ~14 EUR). Время: 1 час.</li>
-                    <li><strong>10:00 – Регистрация на рейс</strong>: Время: 1 час 20 мин до вылета (11:20).</li>
-                    <li><strong>Общая стоимость</strong>: ~3,130 JPY (~18.8 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>Запланированные места в Осаке</h2>
-                <div class="places-list">
-                    <h4>Еда</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/buf2jkYfC7HiawRJ8">Okonomiyaki Mizuno <span class="rank">(4.5)</span></a>: Окономияки. Адрес: 2-4-2 Dotonbori, Chuo-ku, Osaka. День: 5 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/sMHsDZpQbmopqvAK9">Hajime Ramen <span class="rank">(4.6)</span></a>: Тонкоцу рамен. Адрес: 1-9-7 Umeda, Kita-ku, Osaka. День: 5 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/Nrjt6RAo4zgVavtN9">Morning Cafe Umeda <span class="rank">(4.0)</span></a>: Тосты, кофе. Адрес: 1-1-87 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/aGjxbfLmm8gg6Qpf7">Kiji Umeda Sky Building <span class="rank">(4.3)</span></a>: Окономияки. Адрес: 1-1-90 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/MNjqAcmLMzwf7Jot7">Tonkatsu Ganko <span class="rank">(4.4)</span></a>: Тонкацу. Адрес: 5-6-3 Fukushima, Fukushima-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/Qsxj3n5Gx7xJBfjU7">Cafe Esaka <span class="rank">(4.1)</span></a>: Сэндвичи, чай. Адрес: 1-23-16 Esaka-cho, Suita, Osaka. День: 7 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/TsBwEoNennZV9GKs6">Sushi Hanamaru <span class="rank">(4.0)</span></a>: Суши. Адрес: 2-1-1 Senribanpaku, Suita, Osaka. День: 7 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoh Kappo <span class="rank">(4.3)</span></a>: Удон. Адрес: 1-1-1 Minoo, Minoo, Osaka. День: 7 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/MjBwr4jA1Fk1hhHw6">Sumiyoshi Cafe <span class="rank">(4.0)</span></a>: Выпечка, кофе. Адрес: 2-9-90 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/rXa98YbdsN83LYALA">Sumiyoshi Ramen <span class="rank">(4.2)</span></a>: Рамен. Адрес: 2-10-1 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/qrEr8bE3uCoEtNyGA">Yotaro Honten Tempura <span class="rank">(4.6)</span></a>: Тэмпура. Адрес: 2-3-14 Koraibashi, Chuo-ku, Osaka. День: 8 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/N9Ys3GTScH8VfbxSA">Tennoji Bakery <span class="rank">(4.1)</span></a>: Круассаны, сок. Адрес: 1-11-19 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/FxkFBifdDyUuRzWe9">Kushikatsu Daruma <span class="rank">(4.4)</span></a>: Кушикатсу. Адрес: 1-6-12 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/9SDmnriNtbPKZaE46">Takoyaki Juhachi <span class="rank">(4.3)</span></a>: Такояки. Адрес: 5-5-1 Tenjinbashi, Kita-ku, Osaka. День: 9 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/ZPk72nDMJaS4RHmy8">City Cafe Universal <span class="rank">(4.0)</span></a>: Блины, кофе. Адрес: 2-1-25 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/fqHMx7FourQt8eJB9">Hard Rock Cafe Osaka <span class="rank">(4.2)</span></a>: Бургеры. Адрес: 2-1-24 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/d5fsJXtCpx9HYbdF7">Abeno Coffee <span class="rank">(4.0)</span></a>: Тосты, чай. Адрес: 1-1-44 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/QguM1F9qUe3xTHm77">Tendon Tenya <span class="rank">(4.1)</span></a>: Тэмпура. Адрес: 1-2-1 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/ZDsAaomLDYQZE4uT7">Ichiran Namba <span class="rank">(4.5)</span></a>: Рамен. Адрес: 3-5-1 Namba-naka, Naniwa-ku, Osaka. День: 11 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/c1JuWJhtjrxY73M76">Kitahama Cafe <span class="rank">(4.0)</span></a>: Йогурт, кофе. Адрес: 2-4-7 Kitahama, Chuo-ku, Osaka. День: 12 июля.</li>
-                    </ul>
-                    <h4>Достопримечательности</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/FBATPAUUZbXefanZ7">Dotonbori <span class="rank">(4.4)</span></a>: Яркая улица с неоном и AR. Адрес: Dotonbori, Chuo-ku, Osaka. День: 5 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/QChS9VAgUK8rtsVz5">Umeda Sky Building <span class="rank">(4.4)</span></a>: Небоскреб с обсерваторией. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/Qzh8AfZHeYcVoh1r9">Osaka Castle <span class="rank">(4.3)</span></a>: Исторический замок. Адрес: 1-1 Osakajo, Chuo-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/4h6fqdo9w91jiN5A7">Gate Tower Building <span class="rank">(4.1)</span></a>: Здание с автомагистралью. Адрес: 5-4-21 Fukushima, Fukushima-ku, Osaka. День: 6 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/8LHC7YR4oJAtCCjt6">Sumiyoshi Taisha Shrine <span class="rank">(4.5)</span></a>: Синтоистский храм. Адрес: 2-9-89 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/CPVcZN9xdovz6dUb7">Namba Yasaka Shrine <span class="rank">(4.3)</span></a>: Храм с львиной головой. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka. День: 8 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/CTFLanPoUE4DeCek8">Shitennoji Temple <span class="rank">(4.3)</span></a>: Буддийский храм. Адрес: 1-11-18 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/FwypiHQrCo26tjiv5">Abeno Harukas <span class="rank">(4.3)</span></a>: Небоскреб с обсерваторией. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/JNVmDp7k8ppZ52FY9">Tsutenkaku Tower <span class="rank">(4.0)</span></a>: Ретро-башня с VR. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka. День: 11 июля.</li>
-                    </ul>
-                    <h4>Музеи</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/Zg9JAUBJ3bLyhf3t9">Interactive Aquazoo NIFREL <span class="rank">(4.2)</span></a>: Интерактивный аквариум. Адрес: 2-1 Nifrel, Suita, Osaka. День: 7 июля.</li>
-                    </ul>
-                    <h4>Парки</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoo Park <span class="rank">(4.4)</span></a>: Природный парк с водопадом. Адрес: 1-18 Minookoen, Minoo, Osaka. День: 7 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/iyQmm8bE1YoszXxw6">Universal Studios Japan <span class="rank">(4.5)</span></a>: Тематический парк. Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
-                    </ul>
-                    <h4>Торговые зоны</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/acAo9JvfZGwAKSXKA">Kuromon Market <span class="rank">(4.3)</span></a>: Рынок с уличной едой. Адрес: 2-4-1 Nipponbashi, Chuo-ku, Osaka. День: 5 июля.</li>
-                        <li><a href="https://maps.app.goo.gl/7Jp4ZyaeqBCTFts26">Tenjinbashisuji Shotengai <span class="rank">(4.2)</span></a>: Торговая улица. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka. День: 9 июля.</li>
-                    </ul>
-                    <h4>Спорт</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/hejcq8SjK5TpgaAJ7">Osaka Prefectural Gymnasium <span class="rank">(4.2)</span></a>: Турнир сумо (если доступен). Адрес: 3-4-36 Namba-naka, Naniwa-ku, Osaka. День: 11 июля.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>Альтернативные места в Осаке</h2>
-                <div class="places-list">
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/kbSTDb349JpVswab6">Spa World <span class="rank">(4.1)</span></a>: Комплекс горячих источников. Адрес: 3-4-24 Ebisuhigashi, Naniwa-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/agksjko66LGFJSCL8">Osaka Science Museum <span class="rank">(4.3)</span></a>: Интерактивные экспонаты. Адрес: 4-2-1 Nakanoshima, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/9pRnPbyY7pMzhgKs6">Shinsekai <span class="rank">(4.2)</span></a>: Ретро-район с неоном. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/XyZFha5JroWL4ks87">National Museum of Art <span class="rank">(4.3)</span></a>: Современное искусство. Адрес: 4-2-55 Nakanoshima, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/o5uXUUm9bJeUawRR7">Tempozan Ferris Wheel <span class="rank">(4.3)</span></a>: Колесо обозрения. Адрес: 1-1-10 Kaigandori, Minato-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/W5creTq37g6aG9i19">HEP Five <span class="rank">(4.1)</span></a>: Торговая зона с колесом. Адрес: 5-15 Kakudacho, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/4dG8q2rjukw5oMhs6">Osaka Museum of History <span class="rank">(4.3)</span></a>: Интерактивные экспозиции. Адрес: 4-1-32 Otemae, Chuo-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/CTpDKmjFUTD8zxvA8">Nakanoshima Park <span class="rank">(4.2)</span></a>: Парк у реки. Адрес: 1-1 Nakanoshima, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/EcbA31qNzcGQKCgS9">Grand Front Osaka <span class="rank">(4.3)</span></a>: Технологичный ТЦ. Адрес: 4-20 Ofukacho, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/J41JV3cU51Lxfgg88">Osaka City Central Public Hall <span class="rank">(4.3)</span></a>: Историческое здание. Адрес: 1-1-27 Nakanoshima, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/7YP7yRpxRtv7wUtC6">Hokoku Shrine <span class="rank">(4.2)</span></a>: Синтоистский храм. Адрес: 2-1 Osakajo, Chuo-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/tZDg1YbjpJ4d78cFA">Osaka Tenmangu Shrine <span class="rank">(4.3)</span></a>: Храм ученых. Адрес: 2-1-8 Tenjinbashi, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/uaEdiRJCXcDLm1bC9">Nakazakicho <span class="rank">(4.2)</span></a>: Хипстерский район. Адрес: 1-6 Nakazakicho, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/rH879PG43j3TNyYG7">Maishima Pottery Village <span class="rank">(4.1)</span></a>: Керамические мастерские. Адрес: 2-2-98 Hokkoshiratsu, Konohana-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/dEd1TYikAgFurqPT6">Osaka Mint Bureau <span class="rank">(4.3)</span></a>: Сад и музей. Адрес: 1-1-79 Temma, Kita-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/SBBD2GrfYgXtVxs59">Kema Sakuranomiya Park <span class="rank">(4.2)</span></a>: Парк с сакурой. Адрес: 1-1 Nakanocho, Miyakojima-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/AswWVdBpzR3MayWE9">Utsubo Park <span class="rank">(4.2)</span></a>: Городской парк. Адрес: 2-1-4 Utsubohonmachi, Nishi-ku, Osaka.</li>
-                        <li><a href="https://maps.app.goo.gl/asG874We9q8BHwJd9">Don Quijote Dotonbori <span class="rank">(4.1)</span></a>: Магазин скидок. Адрес: 7-13 Soemoncho, Chuo-ku, Osaka.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>Общая стоимость поездки</h2>
-                <ul>
-                    <li><strong>Осака (8 дней)</strong>: ~53,040 JPY (~318.2 EUR).</li>
-                    <li><strong>Переезды</strong>: ~3,750 JPY (~22.5 EUR, включая Shinkansen и JR Haruka).</li>
-                    <li><strong>Итого</strong>: ~56,790 JPY (~340.7 EUR, без отеля, покупок, билетов на самолет).</li>
-                </ul>
-            </div>
-
-            <button onclick="exportToExcel()">Экспорт в Excel</button>
         </div>
-    </main>
 
-    <footer>
-        <p>© 2025 Путешествие по Японии</p>
-    </footer>
+        <div class="section">
+            <h2>День 1: 5 июля 2025 (Прибытие и знакомство с Осакой)</h2>
+            <h3>Тема: Городские технологии и гастрономия</h3>
+            <img src="images/dotonbori_street.jpg" alt="Dotonbori Street">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/Kyoto+Station,+Higashishiokoji+Kamadonocho,+Shimogyo-ku,+Kyoto/2-4-6+Kitahama,+Chuo-ku,+Osaka/Dotonbori,+Chuo-ku,+Osaka/2-4-1+Nipponbashi,+Chuo-ku,+Osaka/1-9-7+Umeda,+Kita-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 5 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак в Киото</strong>: Онигири в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Kyoto Station <span class="rank">(4.0)</span></a> (~300 JPY, ~1.8 EUR). Адрес: Higashishiokoji Kamadonocho, Shimogyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–09:30 – Переезд в Осаку</strong>: Kyoto Station → Shin-Osaka (JR Tokaido Shinkansen, 15 мин), Shin-Osaka → Yodoyabashi (Osaka Metro Midosuji Line, 10 мин). Время: 30 мин. Стоимость: 1,600 JPY (~9.6 EUR, Suica).</li>
+                <li><strong>10:00–10:30 – Заселение</strong>: Hotel Keihan Yodoyabashi. Адрес: 2-4-6 Kitahama, Chuo-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>11:00–12:00 – Обед</strong>: <a href="https://maps.app.goo.gl/buf2jkYfC7HiawRJ8">Okonomiyaki Mizuno <span class="rank">(4.5)</span></a>, окономияки (~1,500 JPY, ~9 EUR). Адрес: 2-4-2 Dotonbori, Chuo-ku, Osaka. Время: 1 час. Маршрут: метро до Namba (Midosuji Line, 5 мин, 180 JPY, ~1.1 EUR).</li>
+                <li><strong>12:30–15:30 – <a href="https://maps.app.goo.gl/FBATPAUUZbXefanZ7">Dotonbori <span class="rank">(4.4)</span></a></strong>: Яркая улица с неоновыми вывесками, AR-инсталляциями. Адрес: Dotonbori, Chuo-ku, Osaka. Время: 3 часа. Стоимость: бесплатно. Пешком 5 мин.</li>
+                <li><strong>16:00–18:00 – <a href="https://maps.app.goo.gl/acAo9JvfZGwAKSXKA">Kuromon Market <span class="rank">(4.3)</span></a></strong>: Рынок с уличной едой, такояки (~500 JPY, ~3 EUR). Адрес: 2-4-1 Nipponbashi, Chuo-ku, Osaka. Время: 2 часа. Стоимость: еда по желанию. Пешком 10 мин.</li>
+                <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/sMHsDZpQbmopqvAK9">Hajime Ramen <span class="rank">(4.6)</span></a>, тонкоцу рамен (~1,200 JPY, ~7.2 EUR). Адрес: 1-9-7 Umeda, Kita-ku, Osaka. Время: 1.5 часа. Маршрут: метро до Umeda (Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>20:30 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: Dotonbori и Kuromon Market: сувениры, сладости. Адрес: Dotonbori, Chuo-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~5,020 JPY (~30.1 EUR).</li>
+            </ul>
+        </div>
 
-    <script src="scripts.js"></script>
+        <div class="section">
+            <h2>День 2: 6 июля 2025 (Технологии и небоскребы)</h2>
+            <h3>Тема: Современная архитектура и виды города</h3>
+            <img src="images/umeda_sky_building.jpg" alt="Umeda Sky Building">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-1-88+Oyodonaka,+Kita-ku,+Osaka/1-1+Osakajo,+Chuo-ku,+Osaka/5-4-21+Fukushima,+Fukushima-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 6 июля</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/Nrjt6RAo4zgVavtN9">Morning Cafe Umeda <span class="rank">(4.0)</span></a>, тосты, кофе (~800 JPY, ~4.8 EUR). Адрес: 1-1-87 Oyodonaka, Kita-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Umeda (Osaka Metro Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/QChS9VAgUK8rtsVz5">Umeda Sky Building <span class="rank">(4.4)</span></a></strong>: Небоскреб с обсерваторией Floating Garden. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka. Время: 2.5 часа. Стоимость: 1,500 JPY (~9 EUR). Пешком 10 мин.</li>
+                <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/aGjxbfLmm8gg6Qpf7">Kiji Umeda Sky Building <span class="rank">(4.3)</span></a>, окономияки (~1,300 JPY, ~7.8 EUR). Адрес: 1-1-90 Oyodonaka, Kita-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>14:00–16:30 – <a href="https://maps.app.goo.gl/Qzh8AfZHeYcVoh1r9">Osaka Castle <span class="rank">(4.3)</span></a></strong>: Исторический замок с цифровым музеем. Адрес: 1-1 Osakajo, Chuo-ku, Osaka. Время: 2.5 часа. Стоимость: 600 JPY (~3.6 EUR). Маршрут: метро до Osakajokoen (JR Loop Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
+                <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/4h6fqdo9w91jiN5A7">Gate Tower Building <span class="rank">(4.1)</span></a></strong>: Здание с автомагистралью. Адрес: 5-4-21 Fukushima, Fukushima-ku, Osaka. Время: 2 часа. Стоимость: бесплатно. Маршрут: метро до Fukushima (JR Loop Line, 10 мин, 180 JPY, ~1.1 EUR).</li>
+                <li><strong>19:30–21:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/MNjqAcmLMzwf7Jot7">Tonkatsu Ganko <span class="rank">(4.4)</span></a>, тонкацу (~1,800 JPY, ~10.8 EUR). Адрес: 5-6-3 Fukushima, Fukushima-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
+                <li><strong>21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (10 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Umeda: электроника, одежда. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~5,950 JPY (~35.7 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 3: 7 июля 2025 (Развлечения и природа)</h2>
+            <h3>Тема: Интерактивные технологии и релакс</h3>
+            <img src="images/nifrel_aquazoo.jpg" alt="NIFREL Aquazoo">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-1+Nifrel,+Suita,+Osaka/1-18+Minookoen,+Minoo,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 7 июля</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/Qsxj3n5Gx7xJBfjU7">Cafe Esaka <span class="rank">(4.1)</span></a>, сэндвичи, чай (~700 JPY, ~4.2 EUR). Адрес: 1-23-16 Esaka-cho, Suita, Osaka. Время: 30 мин.</li>
+                <li><strong>08:30–09:30 – Выезд</strong>: Yodoyabashi → Esaka (Midosuji Line, 15 мин), затем автобус до NIFREL (15 мин, 600 JPY, ~3.6 EUR). Время: 1 час.</li>
+                <li><strong>10:00–13:00 – <a href="https://maps.app.goo.gl/Zg9JAUBJ3bLyhf3t9">Interactive Aquazoo NIFREL <span class="rank">(4.2)</span></a></strong>: Интерактивный аквариум с AR-экспонатами. Адрес: 2-1 Nifrel, Suita, Osaka. Время: 3 часа. Стоимость: 2,000 JPY (~12 EUR).</li>
+                <li><strong>13:30–14:30 – Обед</strong>: <a href="https://maps.app.goo.gl/TsBwEoNennZV9GKs6">Sushi Hanamaru <span class="rank">(4.0)</span></a>, суши (~1,500 JPY, ~9 EUR). Адрес: 2-1-1 Senribanpaku, Suita, Osaka. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>15:00–18:00 – <a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoo Park <span class="rank">(4.4)</span></a></strong>: Природный парк с водопадом. Адрес: 1-18 Minookoen, Minoo, Osaka. Время: 3 часа. Стоимость: бесплатно. Маршрут: автобус до Hankyu Minoo Station (30 мин, 400 JPY, ~2.4 EUR), пешком 15 мин.</li>
+                <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoh Kappo <span class="rank">(4.3)</span></a>, удон (~1,200 JPY, ~7.2 EUR). Адрес: 1-1-1 Minoo, Minoo, Osaka. Время: 1.5 часа. Пешком 10 мин.</li>
+                <li><strong>20:30–21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (40 мин, 600 JPY, ~3.6 EUR).</li>
+                <li><strong>Шопинг</strong>: NIFREL: сувениры. Адрес: 2-1 Nifrel, Suita, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~7,000 JPY (~42 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 4: 8 июля 2025 (Легкий день перед ужином)</h2>
+            <h3>Тема: Культура и релакс</h3>
+            <img src="images/sumiyoshi_taisha.jpg" alt="Sumiyoshi Taisha Shrine">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-9-89+Sumiyoshi,+Sumiyoshi-ku,+Osaka/2-9-19+Motomachi,+Naniwa-ku,+Osaka/2-3-14+Koraibashi,+Chuo-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 8 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/MjBwr4jA1Fk1hhHw6">Sumiyoshi Cafe <span class="rank">(4.0)</span></a>, выпечка, кофе (~600 JPY, ~3.6 EUR). Адрес: 2-9-90 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Sumiyoshi Taisha (Nankai Line, 20 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–11:30 – <a href="https://maps.app.goo.gl/8LHC7YR4oJAtCCjt6">Sumiyoshi Taisha Shrine <span class="rank">(4.5)</span></a></strong>: Синтоистский храм с арочным мостом. Адрес: 2-9-89 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 2 часа. Стоимость: бесплатно.</li>
+                <li><strong>12:00–13:00 – Обед</strong>: <a href="https://maps.app.goo.gl/rXa98YbdsN83LYALA">Sumiyoshi Ramen <span class="rank">(4.2)</span></a>, рамен (~1,000 JPY, ~6 EUR). Адрес: 2-10-1 Sumiyoshi, Sumiyoshi-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/CPVcZN9xdovz6dUb7">Namba Yasaka Shrine <span class="rank">(4.3)</span></a></strong>: Храм с львиной головой. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka. Время: 2 часа. Стоимость: бесплатно. Маршрут: метро до Namba (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
+                <li><strong>16:00–17:00 – Отдых в отеле</strong>: Подготовка к ужину. Время: 1 час. Маршрут: метро до Yodoyabashi (10 мин, tanke JPY, ~1.4 EUR).</li>
+                <li><strong>17:30–19:30 – Ужин</strong>: <a href="https://maps.app.goo.gl/qrEr8bE3uCoEtNyGA">Yotaro Honten Tempura <span class="rank">(4.6)</span></a>, тэмпура (~3,000 JPY, ~18 EUR). Адрес: 2-3-14 Koraibashi, Chuo-ku, Osaka. Время: 2 часа. Пешком 10 мин.</li>
+                <li><strong>20:00 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: Namba: сувениры. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~5,160 JPY (~31 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 5: 9 июля 2025 (История и торговля)</h2>
+            <h3>Тема: Культура и шопинг</h3>
+            <img src="images/shitennoji_temple.jpg" alt="Shitennoji Temple">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-11-18+Shitennoji,+Tennoji-ku,+Osaka/5-6+Tenjinbashi,+Kita-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 9 июля</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/N9Ys3GTScH8VfbxSA">Tennoji Bakery <span class="rank">(4.1)</span></a>, круассаны, сок (~600 JPY, ~3.6 EUR). Адрес: 1-11-19 Shitennoji, Tennoji-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Tennoji (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/CTFLanPoUE4DeCek8">Shitennoji Temple <span class="rank">(4.3)</span></a></strong>: Старейший буддийский храм. Адрес: 1-11-18 Shitennoji, Tennoji-ku, Osaka. Время: 2.5 часа. Стоимость: 300 JPY (~1.8 EUR).</li>
+                <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/FxkFBifdDyUuRzWe9">Kushikatsu Daruma <span class="rank">(4.4)</span></a>, кушикатсу (~1,500 JPY, ~9 EUR). Адрес: 1-6-12 Shitennoji, Tennoji-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>14:00–17:00 – <a href="https://maps.app.goo.gl/7Jp4ZyaeqBCTFts26">Tenjinbashisuji Shotengai <span class="rank">(4.2)</span></a></strong>: Торговая улица. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka. Время: 3 часа. Стоимость: бесплатно. Маршрут: метро до Tenjimbashisuji 6-chome (Tanimachi Line, 15 мин, 280 JPY, ~1.7 EUR).</li>
+                <li><strong>17:30–19:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/9SDmnriNtbPKZaE46">Takoyaki Juhachi <span class="rank">(4.3)</span></a>, такояки (~800 JPY, ~4.8 EUR). Адрес: 5-5-1 Tenjinbashi, Kita-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
+                <li><strong>19:30–20:00 – Возврат в отель</strong>: Метро до Yodoyabashi (15 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Tenjinbashisuji: электроника, сувениры. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~4,000 JPY (~24 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 6: 10 июля 2025 (Universal Studios Japan)</h2>
+            <h3>Тема: Технологии и развлечения</h3>
+            <img src="images/universal_studios_japan.jpg" alt="Universal Studios Japan">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/2-1-33+Sakurajima,+Konohana-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 10 июля</a></p>
+            <ul>
+                <li><strong>07:00–07:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/ZPk72nDMJaS4RHmy8">City Cafe Universal <span class="rank">(4.0)</span></a>, блины, кофе (~1,000 JPY, ~6 EUR). Адрес: 2-1-25 Sakurajima, Konohana-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>07:30–08:30 – Выезд</strong>: Yodoyabashi → Universal City (JR Yumesaki Line, 30 мин, 360 JPY, ~2.2 EUR). Время: 1 час.</li>
+                <li><strong>09:00–18:00 – <a href="https://maps.app.goo.gl/iyQmm8bE1YoszXxw6">Universal Studios Japan <span class="rank">(4.5)</span></a></strong>: Тематический парк (Super Nintendo World, VR-игры). Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka. Время: 9 часов. Стоимость: 8,600 JPY (~51.6 EUR).</li>
+                <li><strong>18:30–20:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/fqHMx7FourQt8eJB9">Hard Rock Cafe Osaka <span class="rank">(4.2)</span></a>, бургеры (~2,000 JPY, ~12 EUR). Адрес: 2-1-24 Sakurajima, Konohana-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
+                <li><strong>20:30–21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (30 мин, 360 JPY, ~2.2 EUR).</li>
+                <li><strong>Шопинг</strong>: Universal Studios: сувениры. Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~12,680 JPY (~76 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 7: 11 июля 2025 (Спорт и панорамы)</h2>
+            <h3>Тема: Традиции и современность</h3>
+            <img src="images/abeno_harukas.jpg" alt="Abeno Harukas">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/1-1-43+Abenosuji,+Abeno-ku,+Osaka/1-18-6+Ebisuhigashi,+Naniwa-ku,+Osaka/3-4-36+Namba-naka,+Naniwa-ku,+Osaka/2-4-6+Kitahama,+Chuo-ku,+Osaka">Маршрут 11 июля</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>: <a href="https://maps.app.goo.gl/d5fsJXtCpx9HYbdF7">Abeno Coffee <span class="rank">(4.0)</span></a>, тосты, чай (~700 JPY, ~4.2 EUR). Адрес: 1-1-44 Abenosuji, Abeno-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>08:30–09:00 – Выезд</strong>: Yodoyabashi → Tennoji (Midosuji Line, 15 мин, 280 JPY, ~1.7 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–12:00 – <a href="https://maps.app.goo.gl/FwypiHQrCo26tjiv5">Abeno Harukas <span class="rank">(4.3)</span></a></strong>: Небоскреб с обсерваторией. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka. Время: 2.5 часа. Стоимость: 1,800 JPY (~10.8 EUR).</li>
+                <li><strong>12:30–13:30 – Обед</strong>: <a href="https://maps.app.goo.gl/QguM1F9qUe3xTHm77">Tendon Tenya <span class="rank">(4.1)</span></a>, тэмпура (~1,200 JPY, ~7.2 EUR). Адрес: 1-2-1 Abenosuji, Abeno-ku, Osaka. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>14:00–16:30 – <a href="https://maps.app.goo.gl/JNVmDp7k8ppZ52FY9">Tsutenkaku Tower <span class="rank">(4.0)</span></a></strong>: Ретро-башня с VR-экспозицией. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka. Время: 2.5 часа. Стоимость: 900 JPY (~5.4 EUR). Маршрут: метро до Ebisucho (Sakaisuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>17:00–19:00 – Турнир сумо (если доступен)</strong>: <a href="https://maps.app.goo.gl/hejcq8SjK5TpgaAJ7">Osaka Prefectural Gymnasium <span class="rank">(4.2)</span></a>, турнир сумо (~3,000 JPY, ~18 EUR). Адрес: 3-4-36 Namba-naka, Naniwa-ku, Osaka. Время: 2 часа. Маршрут: метро до Namba (Midosuji Line, 10 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>19:30–21:00 – Ужин</strong>: <a href="https://maps.app.goo.gl/ZDsAaomLDYQZE4uT7">Ichiran Namba <span class="rank">(4.5)</span></a>, рамен (~1,500 JPY, ~9 EUR). Адрес: 3-5-1 Namba-naka, Naniwa-ku, Osaka. Время: 1.5 часа. Пешком 5 мин.</li>
+                <li><strong>21:30 – Возврат в отель</strong>: Метро до Yodoyabashi (15 мин, 240 JPY, ~1.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Abeno Harukas: одежда, электроника. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka.</li>
+                <li><strong>Общая стоимость</strong>: ~10,100 JPY (~60.6 EUR, с сумо; ~7,100 JPY без сумо).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 8: 12 июля 2025 (Отъезд)</h2>
+            <h3>Тема: Трансфер в аэропорт</h3>
+            <img src="images/kansai_airport.jpg" alt="Kansai International Airport">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-4-6+Kitahama,+Chuo-ku,+Osaka/Kansai+International+Airport,+Izumisano,+Osaka+Prefecture">Маршрут 12 июля</a></p>
+            <ul>
+                <li><strong>07:00–07:30 – Завтрак</strong>: <a href="https://maps.app.goo.gl/c1JuWJhtjrxY73M76">Kitahama Cafe <span class="rank">(4.0)</span></a>, йогурт, кофе (~800 JPY, ~4.8 EUR). Адрес: 2-4-7 Kitahama, Chuo-ku, Osaka. Время: 30 мин.</li>
+                <li><strong>07:30–08:30 – Сборы и выезд</strong>: Время: 1 час.</li>
+                <li><strong>08:30–09:30 – Трансфер в аэропорт</strong>: Yodoyabashi → Kansai Airport (JR Haruka Express, 50 мин, 2,330 JPY, ~14 EUR). Время: 1 час.</li>
+                <li><strong>10:00 – Регистрация на рейс</strong>: Время: 1 час 20 мин до вылета (11:20).</li>
+                <li><strong>Общая стоимость</strong>: ~3,130 JPY (~18.8 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Запланированные места в Осаке</h2>
+            <div class="places-list">
+                <h4>Еда</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/buf2jkYfC7HiawRJ8">Okonomiyaki Mizuno <span class="rank">(4.5)</span></a>: Окономияки. Адрес: 2-4-2 Dotonbori, Chuo-ku, Osaka. День: 5 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/sMHsDZpQbmopqvAK9">Hajime Ramen <span class="rank">(4.6)</span></a>: Тонкоцу рамен. Адрес: 1-9-7 Umeda, Kita-ku, Osaka. День: 5 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/Nrjt6RAo4zgVavtN9">Morning Cafe Umeda <span class="rank">(4.0)</span></a>: Тосты, кофе. Адрес: 1-1-87 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/aGjxbfLmm8gg6Qpf7">Kiji Umeda Sky Building <span class="rank">(4.3)</span></a>: Окономияки. Адрес: 1-1-90 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/MNjqAcmLMzwf7Jot7">Tonkatsu Ganko <span class="rank">(4.4)</span></a>: Тонкацу. Адрес: 5-6-3 Fukushima, Fukushima-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/Qsxj3n5Gx7xJBfjU7">Cafe Esaka <span class="rank">(4.1)</span></a>: Сэндвичи, чай. Адрес: 1-23-16 Esaka-cho, Suita, Osaka. День: 7 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/TsBwEoNennZV9GKs6">Sushi Hanamaru <span class="rank">(4.0)</span></a>: Суши. Адрес: 2-1-1 Senribanpaku, Suita, Osaka. День: 7 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoh Kappo <span class="rank">(4.3)</span></a>: Удон. Адрес: 1-1-1 Minoo, Minoo, Osaka. День: 7 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/MjBwr4jA1Fk1hhHw6">Sumiyoshi Cafe <span class="rank">(4.0)</span></a>: Выпечка, кофе. Адрес: 2-9-90 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/rXa98YbdsN83LYALA">Sumiyoshi Ramen <span class="rank">(4.2)</span></a>: Рамен. Адрес: 2-10-1 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/qrEr8bE3uCoEtNyGA">Yotaro Honten Tempura <span class="rank">(4.6)</span></a>: Тэмпура. Адрес: 2-3-14 Koraibashi, Chuo-ku, Osaka. День: 8 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/N9Ys3GTScH8VfbxSA">Tennoji Bakery <span class="rank">(4.1)</span></a>: Круассаны, сок. Адрес: 1-11-19 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/FxkFBifdDyUuRzWe9">Kushikatsu Daruma <span class="rank">(4.4)</span></a>: Кушикатсу. Адрес: 1-6-12 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/9SDmnriNtbPKZaE46">Takoyaki Juhachi <span class="rank">(4.3)</span></a>: Такояки. Адрес: 5-5-1 Tenjinbashi, Kita-ku, Osaka. День: 9 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/ZPk72nDMJaS4RHmy8">City Cafe Universal <span class="rank">(4.0)</span></a>: Блины, кофе. Адрес: 2-1-25 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/fqHMx7FourQt8eJB9">Hard Rock Cafe Osaka <span class="rank">(4.2)</span></a>: Бургеры. Адрес: 2-1-24 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/d5fsJXtCpx9HYbdF7">Abeno Coffee <span class="rank">(4.0)</span></a>: Тосты, чай. Адрес: 1-1-44 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/QguM1F9qUe3xTHm77">Tendon Tenya <span class="rank">(4.1)</span></a>: Тэмпура. Адрес: 1-2-1 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/ZDsAaomLDYQZE4uT7">Ichiran Namba <span class="rank">(4.5)</span></a>: Рамен. Адрес: 3-5-1 Namba-naka, Naniwa-ku, Osaka. День: 11 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/c1JuWJhtjrxY73M76">Kitahama Cafe <span class="rank">(4.0)</span></a>: Йогурт, кофе. Адрес: 2-4-7 Kitahama, Chuo-ku, Osaka. День: 12 июля.</li>
+                </ul>
+                <h4>Достопримечательности</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/FBATPAUUZbXefanZ7">Dotonbori <span class="rank">(4.4)</span></a>: Яркая улица с неоном и AR. Адрес: Dotonbori, Chuo-ku, Osaka. День: 5 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/QChS9VAgUK8rtsVz5">Umeda Sky Building <span class="rank">(4.4)</span></a>: Небоскреб с обсерваторией. Адрес: 1-1-88 Oyodonaka, Kita-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/Qzh8AfZHeYcVoh1r9">Osaka Castle <span class="rank">(4.3)</span></a>: Исторический замок. Адрес: 1-1 Osakajo, Chuo-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/4h6fqdo9w91jiN5A7">Gate Tower Building <span class="rank">(4.1)</span></a>: Здание с автомагистралью. Адрес: 5-4-21 Fukushima, Fukushima-ku, Osaka. День: 6 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/8LHC7YR4oJAtCCjt6">Sumiyoshi Taisha Shrine <span class="rank">(4.5)</span></a>: Синтоистский храм. Адрес: 2-9-89 Sumiyoshi, Sumiyoshi-ku, Osaka. День: 8 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/CPVcZN9xdovz6dUb7">Namba Yasaka Shrine <span class="rank">(4.3)</span></a>: Храм с львиной головой. Адрес: 2-9-19 Motomachi, Naniwa-ku, Osaka. День: 8 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/CTFLanPoUE4DeCek8">Shitennoji Temple <span class="rank">(4.3)</span></a>: Буддийский храм. Адрес: 1-11-18 Shitennoji, Tennoji-ku, Osaka. День: 9 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/FwypiHQrCo26tjiv5">Abeno Harukas <span class="rank">(4.3)</span></a>: Небоскреб с обсерваторией. Адрес: 1-1-43 Abenosuji, Abeno-ku, Osaka. День: 11 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/JNVmDp7k8ppZ52FY9">Tsutenkaku Tower <span class="rank">(4.0)</span></a>: Ретро-башня с VR. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka. День: 11 июля.</li>
+                </ul>
+                <h4>Музеи</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/Zg9JAUBJ3bLyhf3t9">Interactive Aquazoo NIFREL <span class="rank">(4.2)</span></a>: Интерактивный аквариум. Адрес: 2-1 Nifrel, Suita, Osaka. День: 7 июля.</li>
+                </ul>
+                <h4>Парки</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/WmzhUvtXvcHrW4Rq7">Minoo Park <span class="rank">(4.4)</span></a>: Природный парк с водопадом. Адрес: 1-18 Minookoen, Minoo, Osaka. День: 7 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/iyQmm8bE1YoszXxw6">Universal Studios Japan <span class="rank">(4.5)</span></a>: Тематический парк. Адрес: 2-1-33 Sakurajima, Konohana-ku, Osaka. День: 10 июля.</li>
+                </ul>
+                <h4>Торговые зоны</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/acAo9JvfZGwAKSXKA">Kuromon Market <span class="rank">(4.3)</span></a>: Рынок с уличной едой. Адрес: 2-4-1 Nipponbashi, Chuo-ku, Osaka. День: 5 июля.</li>
+                    <li><a href="https://maps.app.goo.gl/7Jp4ZyaeqBCTFts26">Tenjinbashisuji Shotengai <span class="rank">(4.2)</span></a>: Торговая улица. Адрес: 5-6 Tenjinbashi, Kita-ku, Osaka. День: 9 июля.</li>
+                </ul>
+                <h4>Спорт</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/hejcq8SjK5TpgaAJ7">Osaka Prefectural Gymnasium <span class="rank">(4.2)</span></a>: Турнир сумо (если доступен). Адрес: 3-4-36 Namba-naka, Naniwa-ku, Osaka. День: 11 июля.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Альтернативные места в Осаке</h2>
+            <div class="places-list">
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/kbSTDb349JpVswab6">Spa World <span class="rank">(4.1)</span></a>: Комплекс горячих источников. Адрес: 3-4-24 Ebisuhigashi, Naniwa-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/agksjko66LGFJSCL8">Osaka Science Museum <span class="rank">(4.3)</span></a>: Интерактивные экспонаты. Адрес: 4-2-1 Nakanoshima, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/9pRnPbyY7pMzhgKs6">Shinsekai <span class="rank">(4.2)</span></a>: Ретро-район с неоном. Адрес: 1-18-6 Ebisuhigashi, Naniwa-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/XyZFha5JroWL4ks87">National Museum of Art <span class="rank">(4.3)</span></a>: Современное искусство. Адрес: 4-2-55 Nakanoshima, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/o5uXUUm9bJeUawRR7">Tempozan Ferris Wheel <span class="rank">(4.3)</span></a>: Колесо обозрения. Адрес: 1-1-10 Kaigandori, Minato-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/W5creTq37g6aG9i19">HEP Five <span class="rank">(4.1)</span></a>: Торговая зона с колесом. Адрес: 5-15 Kakudacho, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/4dG8q2rjukw5oMhs6">Osaka Museum of History <span class="rank">(4.3)</span></a>: Интерактивные экспозиции. Адрес: 4-1-32 Otemae, Chuo-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/CTpDKmjFUTD8zxvA8">Nakanoshima Park <span class="rank">(4.2)</span></a>: Парк у реки. Адрес: 1-1 Nakanoshima, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/EcbA31qNzcGQKCgS9">Grand Front Osaka <span class="rank">(4.3)</span></a>: Технологичный ТЦ. Адрес: 4-20 Ofukacho, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/J41JV3cU51Lxfgg88">Osaka City Central Public Hall <span class="rank">(4.3)</span></a>: Историческое здание. Адрес: 1-1-27 Nakanoshima, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/7YP7yRpxRtv7wUtC6">Hokoku Shrine <span class="rank">(4.2)</span></a>: Синтоистский храм. Адрес: 2-1 Osakajo, Chuo-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/tZDg1YbjpJ4d78cFA">Osaka Tenmangu Shrine <span class="rank">(4.3)</span></a>: Храм ученых. Адрес: 2-1-8 Tenjinbashi, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/uaEdiRJCXcDLm1bC9">Nakazakicho <span class="rank">(4.2)</span></a>: Хипстерский район. Адрес: 1-6 Nakazakicho, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/rH879PG43j3TNyYG7">Maishima Pottery Village <span class="rank">(4.1)</span></a>: Керамические мастерские. Адрес: 2-2-98 Hokkoshiratsu, Konohana-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/dEd1TYikAgFurqPT6">Osaka Mint Bureau <span class="rank">(4.3)</span></a>: Сад и музей. Адрес: 1-1-79 Temma, Kita-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/SBBD2GrfYgXtVxs59">Kema Sakuranomiya Park <span class="rank">(4.2)</span></a>: Парк с сакурой. Адрес: 1-1 Nakanocho, Miyakojima-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/AswWVdBpzR3MayWE9">Utsubo Park <span class="rank">(4.2)</span></a>: Городской парк. Адрес: 2-1-4 Utsubohonmachi, Nishi-ku, Osaka.</li>
+                    <li><a href="https://maps.app.goo.gl/asG874We9q8BHwJd9">Don Quijote Dotonbori <span class="rank">(4.1)</span></a>: Магазин скидок. Адрес: 7-13 Soemoncho, Chuo-ku, Osaka.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Общая стоимость поездки</h2>
+            <ul>
+                <li><strong>Осака (8 дней)</strong>: ~53,040 JPY (~318.2 EUR).</li>
+                <li><strong>Переезды</strong>: ~3,750 JPY (~22.5 EUR, включая Shinkansen и JR Haruka).</li>
+                <li><strong>Итого</strong>: ~56,790 JPY (~340.7 EUR, без отеля, покупок, билетов на самолет).</li>
+            </ul>
+        </div>
+
+        <a href="index.html" class="back-to-top">В начало</a>
+    </div>
 </body>
 </html>
