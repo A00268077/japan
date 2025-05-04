@@ -1,0 +1,192 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фудзи - Путеводитель по Японии</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="scripts.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Путеводитель по Готембе и Фудзи: 25–26 июня 2025</h1>
+    </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="tokyo.html">Токио</a></li>
+            <li><a href="fuji.html">Фудзи</a></li>
+            <li><a href="kyoto.html">Киото</a></li>
+            <li><a href="osaka.html">Осака</a></li>
+            <li><a href="transfers.html">Переезды</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <img src="https://via.placeholder.com/800x400?text=Fuji+Mountain" alt="Mount Fuji">
+        <div class="section">
+            <h2>Общая информация</h2>
+            <ul>
+                <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/1q3PqX3y7r3xZ3rK8">Toyoko Inn Gotemba Ekimae, 1988-1 Niihashi, Gotemba, Shizuoka <span class="rank">(4.0)</span></a>.</li>
+                <li><strong>Завтрак</strong>: Включен в отеле (шведский стол, 07:00–09:00): рис, мисо-суп, жареная рыба, тушеные овощи, омлет, салат, натто, чай (~1,000 JPY, ~6 EUR эквивалент). Время: 30 мин.</li>
+                <li><strong>Транспорт</strong>:
+                    <ul>
+                        <li>Переезд 25 июня: Kamata → Gotemba (JR Tokaido Line с пересадкой в Kozu или Odawara).</li>
+                        <li>Местный транспорт: автобусы Fujikyuko (Gotemba → Kawaguchiko), поезд Fujikyuko Line, такси для отдаленных точек.</li>
+                        <li>Карта Suica/Pasmo (2,000 JPY, ~12 EUR, депозит 500 JPY). Работает на JR и Fujikyuko.</li>
+                        <li>Время и стоимость: по Google Maps/Navitime.</li>
+                    </ul>
+                </li>
+                <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
+                <li><strong>Погода</strong>: Сезон дождей (15–25°C, осадки вероятны). Зонты, дождевики, удобная обувь.</li>
+                <li><strong>Видимость Фудзи</strong>: Лучше утром, проверяйте Fuji-san Live Camera. Облака могут закрывать гору.</li>
+                <li><strong>Питание</strong>: Бюджет 1,000–2,500 JPY (~6–15 EUR) на обед/ужин. Японская кухня: удон, якитори, хото, тэмпура.</li>
+                <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
+                <li><strong>График</strong>: 25 июня — вечер после переезда (1–2 точки). 26 июня — выезд 08:00, возврат 21:00–22:00.</li>
+                <li><strong>Бронирование</strong>: Не требуется для указанных достопримечательностей, но уточняйте для музея Кимуры.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 1: 25 июня 2025 (Переезд и Готемба)</h2>
+            <h3>Тема: Аутлет-шопинг, вечерние виды Фудзи</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/4-18-24+Kamata,+Ota+City/1988-1+Niihashi,+Gotemba,+Shizuoka/1312+Fukazawa,+Gotemba,+Shizuoka/1988-1+Niihashi,+Gotemba,+Shizuoka">Маршрут 25 июня</a></p>
+            <ul>
+                <li><strong>08:00–09:00 – Завтрак в APA Hotel (Токио)</strong>: Не включен, возьмите онигири в 7-Eleven Kamata <span class="rank">(3.8)</span> (~300 JPY, ~1.8 EUR) или гюдон в Sukiya Kamata <span class="rank">(3.3)</span> (5-28-12 Kamata, 600 JPY, ~3.6 EUR). Время: 30 мин.</li>
+                <li><strong>09:30–11:30 – Переезд в Готембу</strong>:
+                    <ul>
+                        <li>Маршрут: Kamata → Shinagawa (Keikyu Main Line, 7 мин) → Kozu (JR Tokaido Line, 60 мин) → Gotemba (JR Gotemba Line, 15 мин).</li>
+                        <li>Время: ~2 часа. Стоимость: 1,800 JPY (~10.8 EUR, Suica/Pasmo).</li>
+                        <li>Адрес отеля: <a href="https://maps.app.goo.gl/EtmdyJobKjhnsjjC8">Sawayaka Gotemba Interchange Branch <span class="rank">(4.2)</span></a> (5 мин пешком от станции Gotemba).</li>
+                    </ul>
+                </li>
+                <li><strong>12:00–13:00 – Обед в Gotemba</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/9k3zYvWvY3zZ3rK8">Torikizoku <span class="rank">(3.9)</span></a></strong>: Якитори (куриные шашлычки, 1,200 JPY, ~7.2 EUR), рис, мисо-суп. Адрес: 1910-1 Niihashi, Gotemba (5 мин пешком от отеля). Время: 1 час.</li>
+                    </ul>
+                </li>
+                <li><strong>13:30–17:00 – <a href="https://maps.app.goo.gl/uUf9bdNt96j5V4sD9">Gotemba Premium Outlets <span class="rank">(4.2)</span></a></strong>:
+                    <ul>
+                        <li>Крупнейший аутлет (Gucci, Nike, Uniqlo). Виды на Фудзи при ясной погоде.</li>
+                        <li>Адрес: 1312 Fukazawa, Gotemba, Shizuoka. Время: 3.5 часа. Стоимость: бесплатно (покупки по желанию).</li>
+                        <li>Маршрут: отель → аутлет (пешком 15 мин или автобус, 200 JPY, ~1.2 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>17:30–19:00 – Ужин в Gotemba</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/gHnkF83QWmxvfg2V7">ETRO Gyukatsu Motomura <span class="rank">(4.7)</span></a></strong>: Говядина сам готовишь (2000-3000 JPY, ~12-18 EUR), салат, чай. Адрес: 1908-1 Niihashi, Gotemba (5 мин пешком от отеля). Время: 1.5 часа.</li>
+                    </ul>
+                </li>
+                <li><strong>19:30 – Возврат в отель</strong>: Пешком 5 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: <a href="https://maps.app.goo.gl/uUf9bdNt96j5V4sD9">Gotemba Premium Outlets <span class="rank">(4.2)</span></a>: Одежда, сувениры. Адрес: 1312 Fukazawa, Gotemba.</li>
+                <li><strong>Общая стоимость</strong>: ~4,100 JPY (~24.6 EUR, без покупок в аутлете).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 2: 26 июня 2025 (Озеро Кавагутико и Фудзи)</h2>
+            <h3>Тема: Виды Фудзи, пагода, культура</h3>
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/1988-1+Niihashi,+Gotemba,+Shizuoka/1397-1+Arashimacho,+Fujikawaguchiko,+Minamitsume,+Yamanashi/1397-1+Arashimacho,+Fujikawaguchiko/668-2+Funatsu,+Fujikawaguchiko/555+Fujikawaguchiko,+Minamitsume,+Yamanashi/1988-1+Niihashi,+Gotemba,+Shizuoka">Маршрут 26 июня</a></p>
+            <ul>
+                <li><strong>07:00–07:30 – Завтрак в Toyoko Inn</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/1q3PqX3y7r3xZ3rK8">Toyoko Inn Gotemba Ekimae <span class="rank">(4.0)</span></a></strong>: Шведский стол: рис, мисо-суп, жареная скумбрия, тушеный тофу, натто, омлет, салат, зеленый чай. Адрес: 1988-1 Niihashi, Gotemba. Время: 30 мин. Стоимость: включено.</li>
+                    </ul>
+                </li>
+                <li><strong>07:30–08:30 – Выезд к озеру Кавагутико</strong>:
+                    <ul>
+                        <li>Маршрут: Gotemba → Kawaguchiko (Fujikyuko Bus, прямой, 50 мин).</li>
+                        <li>Время: 50 мин. Стоимость: 1,500 JPY (~9 EUR, Suica частично, наличные).</li>
+                    </ul>
+                </li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/q9aoRezQx3TJ1b8z7">Пагода Чурейто <span class="rank">(4.7)</span></a></strong>:
+                    <ul>
+                        <li>Иконический вид на Фудзи с пагодой. 398 ступеней до смотровой.</li>
+                        <li>Адрес: 1397-1 Arashimacho, Fujikawaguchiko, Minamitsume, Yamanashi. Время: 2 часа. Стоимость: бесплатно.</li>
+                        <li>Маршрут: Kawaguchiko Station → Shimoyoshida Station (Fujikyuko Line, 10 мин, 300 JPY, ~1.8 EUR), затем пешком 15 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>11:30–12:30 – Обед в Кавагутико</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/A5r8WDW6PNhvxGCW9">Houtou Fudou <span class="rank">(4.1)</span></a></strong>: Хото (густая лапша с тыквой и овощами, 1,200 JPY, ~7.2 EUR), мисо-суп. Адрес: 707 Kawaguchiko, Fujikawaguchiko. Время: 1 час. Пешком 10 мин от станции Kawaguchiko.</li>
+                    </ul>
+                </li>
+                <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/ZuU7UG8HiUDykdt89">Озеро Кавагутико <span class="rank">(4.5)</span></a></strong>:
+                    <ul>
+                        <li>Прогулка по набережной, виды Фудзи, прокат лодок (опционально, 1,000 JPY, ~6 EUR).</li>
+                        <li>Адрес: 668-2 Funatsu, Fujikawaguchiko. Время: 2 часа. Стоимость: бесплатно.</li>
+                        <li>Маршрут: пешком 10 мин от Houtou Fudou.</li>
+                    </ul>
+                </li>
+                <li><strong>15:30–17:30 – <a href="https://maps.app.goo.gl/trwYs5kksFki5X9S6">Kawaguchiko Museum Music Fores Museum (Музей Кимуры) <span class="rank">(4.3)</span></a></strong>:
+                    <ul>
+                        <li>Картины с видами Фудзи.</li>
+                        <li>Адрес: 3170 Kawaguchiko, Fujikawaguchiko. Время: 2 часа. Стоимость: 800 JPY (~4.8 EUR).</li>
+                        <li>Маршрут: пешком 15 мин или такси (~1,000 JPY, ~6 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>18:00–19:30 – Ужин в Кавагутико</strong>:
+                    <ul>
+                        <li><strong><a href="https://maps.app.goo.gl/PKkX7sjN6j4uUqY16">Fuji Tempura Idaten <span class="rank">(4.2)</span></a></strong>: Тэмпура (креветки, овощи, 1,500 JPY, ~9 EUR), рис, мисо-суп. Адрес: 3486-1 Funatsu, Fujikawaguchiko. Время: 1.5 часа. Пешком 10 мин.</li>
+                    </ul>
+                </li>
+                <li><strong>20:00–21:00 – <a href="https://maps.app.goo.gl/XhU45nyY1hA6Ukvf6">Храм Фудзи Омуро Sengen <span class="rank">(4.3)</span></a></strong>:
+                    <ul>
+                        <li>Синтоистский храм с видом на Фудзи (вечернее освещение).</li>
+                        <li>Адрес: 555 Fujikawaguchiko, Minamitsume, Yamanashi. Время: 1 час. Стоимость: бесплатно.</li>
+                        <li>Маршрут: такси (~1,500 JPY, ~9 EUR) или автобус (20 мин, 300 JPY, ~1.8 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>21:30–22:30 – Возврат в Готембу</strong>:
+                    <ul>
+                        <li>Маршрут: Kawaguchiko → Gotemba (Fujikyuko Bus, 50 мин).</li>
+                        <li>Время: 50 мин. Стоимость: 1,500 JPY (~9 EUR).</li>
+                    </ul>
+                </li>
+                <li><strong>Шопинг</strong>: Сувенирные лавки у озера Кавагутико <span class="rank">(4.0)</span>: Онигири, фигурки Фудзи. Адрес: 668-2 Funatsu, Fujikawaguchiko.</li>
+                <li><strong>Общая стоимость</strong>: ~8,600 JPY (~51.6 EUR, без лодок или такси).</li>
+            </ul>
+        </div>
+        <a href="index.html" class="back-to-top">В начало</a>
+    </div>
+</body>
+</html>
