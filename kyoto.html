@@ -1,326 +1,400 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Путеводитель по Киото</title>
+    <title>Киото - Путеводитель по Японии</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+    </script>
+    <script src="scripts.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Путешествие по Японии: Киото</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Главная</a></li>
-                <li><a href="fuji.html">Фудзи</a></li>
-                <li><a href="kyoto.html">Киото</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div id="kyoto" class="city-section">
-            <h1>Путеводитель по Киото: 27 июня – 5 июля 2025</h1>
-
-            <div class="section">
-                <h2>Список мест в Киото и Кобе</h2>
-                <div class="places-list">
-                    <h4>Достопримечательности</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/nnRgr3TKiFLfptRJ9">Fushimi Inari Taisha <span class="rank">(4.7)</span></a>: Тысячи красных ворот тории, тропа на гору.</li>
-                        <li><a href="https://maps.app.goo.gl/njZrVqCYvk4ySDFS7">Kinkaku-ji <span class="rank">(4.6)</span></a>: Золотой павильон в саду.</li>
-                        <li><a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Arashiyama Bamboo Grove <span class="rank">(4.5)</span></a>: Бамбуковая роща, живописная тропа.</li>
-                        <li><a href="https://maps.app.goo.gl/kUx715Q15pYMnC6R9">Iwatayama Monkey Park <span class="rank">(4.4)</span></a>: Обезьяны и панорама Киото.</li>
-                        <li><a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Уличный рынок еды и сувениров.</li>
-                        <li><a href="https://maps.app.goo.gl/x6M19DW5oUzBkp936">Gion District <span class="rank">(4.4)</span></a>: Исторический район гейш.</li>
-                        <li><a href="https://maps.app.goo.gl/D5QXkbbXPKsHKgcx6">Kiyomizu-dera <span class="rank">(4.5)</span></a>: Храм с панорамной террасой.</li>
-                        <li><a href="https://maps.app.goo.gl/paFiK622wtsWzJ9Z8">Kyoto Imperial Palace <span class="rank">(4.3)</span></a>: Исторический дворец.</li>
-                        <li><a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a>: Самурайские декорации, шоу.</li>
-                        <li><a href="https://maps.app.goo.gl/Emr5BGnf64zVL28D9">Kyoto University Museum <span class="rank">(4.1)</span></a>: Наука и история.</li>
-                        <li><a href="https://maps.app.goo.gl/xgCrXoS33fu4m5EEA">Todai-ji Temple <span class="rank">(4.7)</span></a>: Храм с Великим Буддой.</li>
-                        <li><a href="https://maps.app.goo.gl/D9ajHfW5jgUTAb639">Nara Park <span class="rank">(4.6)</span></a>: Олени, сады, святилище.</li>
-                        <li><a href="https://maps.app.goo.gl/PwwTA2cowjUGvCfbA">Disaster Reduction and Human Renovation Institution <span class="rank">(4.5)</span></a>: Музей землетрясений, технологии.</li>
-                        <li><a href="https://maps.app.goo.gl/dhmXNVotsGSmmWkj7">Rokko Garden Terrace <span class="rank">(4.4)</span></a>: Смотровая площадка с видом на залив.</li>
-                    </ul>
-                    <h4>Еда</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a>: Тонкацу (свиная котлета).</li>
-                        <li><a href="https://maps.app.goo.gl/soPBdVLkHJUZBYhK8">Gion Kagizen Yoshifusa <span class="rank">(4.5)</span></a>: Вагаси и маття.</li>
-                        <li><a href="https://maps.app.goo.gl/RqhPpE7G67sryDHc6">Vermillion Cafe <span class="rank">(4.2)</span></a>: Сэндвичи и кофе.</li>
-                        <li><a href="https://maps.app.goo.gl/SabxMn4MdjnfcAvB8">Arashiyama Yoshimura <span class="rank">(4.1)</span></a>: Соба с тэмпурой.</li>
-                        <li><a href="https://maps.app.goo.gl/uh1EEm6AZHYgKUc56">Yudofu Sagano <span class="rank">(4.2)</span></a>: Юдофу (тофу в бульоне).</li>
-                        <li><a href="https://maps.app.goo.gl/yCsESn1n1svTz1Q3A">Arashiyama Kitcho <span class="rank">(4.3)</span></a>: Кайсэки.</li>
-                        <li><a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a>: Вагаси (ёкан).</li>
-                        <li><a href="https://maps.app.goo.gl/bZwq8NotJ1PAs9Ga7">Kameya <span class="rank">(4.2)</span></a>: Камамеши (рис в горшочке).</li>
-                        <li><a href="https://maps.app.goo.gl/BonZvXRkwAhVFn9QA">Nakatanidou <span class="rank">(4.5)</span></a>: Вагаси (моти).</li>
-                        <li><a href="https://maps.app.goo.gl/gFDjuWLAdWZQQ3CF9">Kobe Beef Yamato <span class="rank">(4.3)</span></a>: Кобе биф бургер.</li>
-                        <li><a href="https://maps.app.goo.gl/vSeCxi4mkAUssYGKA">Patisserie Montplus <span class="rank">(4.5)</span></a>: Маття-торт.</li>
-                        <li><strong>Saga Tofu Ine <span class="rank">(4.1)</span></strong>: Тофу-меню. Адрес: 19 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
-                        <li><strong>Uzumasa Ramen <span class="rank">(4.0)</span></strong>: Рамэн мисо. Адрес: 5-5 Uzumasa, Ukyo-ku, Kyoto.</li>
-                    </ul>
-                    <h4>Бани</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/xFuHY8KBGQeqPiec8">Funaoka Onsen <span class="rank">(4.4)</span></a>: Историческое сэнто, тату разрешены.</li>
-                        <li><a href="https://maps.app.goo.gl/BJ8zKX8T1fGcz1t29">Tenzan No Yu <span class="rank">(4.3)</span></a>: Онсэн, тату разрешены.</li>
-                        <li><a href="https://maps.app.goo.gl/iun1mTk3RmqpK23h8">Kurama Onsen <span class="rank">(4.3)</span></a>: Онсэн с частными ваннами, тату разрешены.</li>
-                        <li><a href="https://maps.app.goo.gl/M6qecXJhsG8n69sD8">Hana no Yu <span class="rank">(4.2)</span></a>: Сэнто, тату разрешены.</li>
-                        <li><a href="https://maps.app.goo.gl/2UMVdBkeEFbYm8yo8">Saga-Toriimoto Onsen <span class="rank">(4.2)</span></a>: Онсэн, тату разрешены.</li>
-                    </ul>
-                    <h4>Шопинг</h4>
-                    <ul>
-                        <li><a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Вагаси, керамика.</li>
-                        <li><a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a>: Вагаси, подарочная упаковка.</li>
-                        <li><a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a>: Самурайские фигурки.</li>
-                        <li><strong>Fushimi Inari <span class="rank">(4.0)</span></strong>: Фигурки лисиц, талисманы. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto.</li>
-                        <li><strong>Ginkaku-ji <span class="rank">(4.0)</span></strong>: Керамика, открытки. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto.</li>
-                        <li><strong>Arashiyama <span class="rank">(4.0)</span></strong>: Веера, кимоно. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
-                        <li><strong>Nara Park <span class="rank">(4.0)</span></strong>: Фигурки оленей, талисманы. Адрес: 469 Zoshicho, Nara, Nara Prefecture.</li>
-                        <li><strong>Sannomiya <span class="rank">(4.0)</span></strong>: Гаджеты, модные аксессуары. Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture.</li>
-                    </ul>
-                    <h4>Альтернативные места</h4>
-                    <ul>
-                        <li><strong>Достопримечательности</strong></li>
-                        <li><a href="https://maps.app.goo.gl/4C2WXLnVdzNAE2z87"><strong>To-ji Temple <span class="rank">(4.4)</span></strong></a>: Храм с пагодой и блошиным рынком. Адрес: 1 Kujocho, Minami Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/zW345arkfUfzVZcW9">Philosopher’s Path <span class="rank">(4.3)</span></a>: Тропа вдоль канала с храмами.</li>
-                        <li><a href="https://maps.app.goo.gl/zCXgbNC6YWiqJSHMA">Ginkaku-ji <span class="rank">(4.4)</span></a>: Серебряный павильон и сад.</li>
-                        <li><a href="https://maps.app.goo.gl/iRFLn5xLscgScFMv6"><strong>Ryoan-ji <span class="rank">(4.3)</span></strong></a>: Храм с садом камней. Адрес: 13 Ryoanji Goryonoshitacho, Ukyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/ef14PaLpWSpZESgq9"><strong>Heian Shrine <span class="rank">(4.4)</span></strong></a>: Храм с обширным садом. Адрес: Okazaki Nishitennocho, Sakyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/BkgmwCTSSJnSVYNUA"><strong>Tenryu-ji <span class="rank">(4.4)</span></strong></a>: Храм дзэн с садом. Адрес: 68 Sagatenryuji Susukinobabacho, Ukyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/dVHspNEnbZ1aqYbf9"><strong>Nijo Castle <span class="rank">(4.4)</span></strong></a>: Замок сёгунов с садами. Адрес: 541 Nijojocho, Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/nvAzEcGY1Tk9fpLs6"><strong>Kobe Nunobiki Herb Garden <span class="rank">(4.3)</span></strong></a>: Травяной сад с канатной дорогой. Адрес: 1-4-3 Kitanocho, Chuo Ward, Kobe.</li>
-                        <li><a href="https://maps.app.goo.gl/CTgzBSaXGixsrBGH6"><strong>Kobe Port Tower <span class="rank">(4.2)</span></strong></a>: Смотровая башня у порта. Адрес: 2-2 Hatobacho, Chuo Ward, Kobe.</li>
-                        <li><a href="https://maps.app.goo.gl/CdZydW3fUrZKSvGU6"><strong>Meriken Park <span class="rank">(4.3)</span></strong></a>: Парк с видом на залив. Адрес: 2-2 Hatobacho, Chuo Ward, Kobe.</li>
-                        <li><strong>Еда</strong></li>
-                        <li><a href="https://maps.app.goo.gl/yi67xc3g4PBKpfT66"><strong>Kichi Kichi Omurice <span class="rank">(4.5)</span></strong></a>: Знаменитый омлет с рисом. Адрес: 185-4 Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/8KPW8aDba2kTNoSf7"><strong>Ippudo Kyoto <span class="rank">(4.2)</span></strong></a>: Рамэн тонкоцу. Адрес: 653-1 Bantoyacho, Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/8WVMQtaPoMGdduuJA"><strong>Kobe Chinatown <span class="rank">(4.2)</span></strong></a>: Китайские пельмени и булочки. Адрес: 1-2 Motomachidori, Chuo Ward, Kobe.</li>
-                        <li><strong>Шопинг</strong></li>
-                        <li><a href="https://maps.app.goo.gl/qEzMXkMKNrmUUZ9TA"><strong>Teramachi Street <span class="rank">(4.2)</span></strong></a>: Арт, книги, сувениры. Адрес: Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/1dqFxVhFrFXNsmdn7"><strong>Kyoto Handicraft Center <span class="rank">(4.1)</span></strong></a>: Традиционные ремесла. Адрес: 17 Shogoin Entomicho, Sakyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/BBsCNWAjsnCeiFvLA"><strong>AEON Mall Kyoto <span class="rank">(4.0)</span></strong></a>: Одежда и электроника. Адрес: 1 Nishikujo Toriiguchicho, Minami Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/HxFeTmhQRAkHcLG7A"><strong>Kawaramachi Street <span class="rank">(4.2)</span></strong></a>: Модные магазины. Адрес: Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/ivDwq4T1RUdJri6H9"><strong>Kyoto Nishiki Tenmangu <span class="rank">(4.3)</span></strong></a>: Сувениры у храма. Адрес: 537 Nakagyo Ward, Kyoto.</li>
-                        <li><a href="https://maps.app.goo.gl/TBYMo1CtbxzPphheA"><strong>Kobe Motomachi <span class="rank">(4.1)</span></strong></a>: Модные магазины. Адрес: 1-2 Motomachidori, Chuo Ward, Kobe.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2>Общая информация</h2>
+    <div class="header">
+        <h1>Путеводитель по Киото: 27 июня – 5 июля 2025</h1>
+    </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="tokyo.html">Токио</a></li>
+            <li><a href="fuji.html">Фудзи</a></li>
+            <li><a href="kyoto.html">Киото</a></li>
+            <li><a href="osaka.html">Осака</a></li>
+            <li><a href="transfers.html">Переезды</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <div class="section">
+            <h2>Список мест в Киото и Кобе</h2>
+            <div class="places-list">
+                <h4>Достопримечательности</h4>
                 <ul>
-                    <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/8mESTE5B5xNZrTiT8">M's Hotel Sanjo Omiya <span class="rank">(4.0)</span></a>. Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Центр, 5 мин от метро Sanjo Keihan, рядом Nishiki Market, Gion.</li>
-                    <li><strong>Транспорт</strong>:
-                        <ul>
-                            <li>Переезд 27 июня: Gotemba → Kyoto (Shinkansen Nozomi через Mishima, ~2.5 часа, 12,000 JPY, ~72 EUR).</li>
-                            <li>Местный транспорт: Kyoto City Subway (Karasuma Line, Tozai Line), автобусы, поезда JR (до Арасиямы, Нары, Кобе).</li>
-                            <li>Карта ICOCA (2,000 JPY, ~12 EUR, депозит 500 JPY). Работает в Киото, Наре, Кобе.</li>
-                            <li>Время и стоимость: по Google Maps/Navitime.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
-                    <li><strong>Погода</strong>: Сезон дождей (15–25°C, влажно). Зонты, легкая одежда, удобная обувь.</li>
-                    <li><strong>Питание</strong>: Бюджет 1,000–2,500 JPY (~6–15 EUR) на обед/ужин. Завтраки: 500–1,500 JPY (~3–9 EUR). Японская кухня: кайсэки, вагаси, рамен.</li>
-                    <li><strong>Бани (онсэн/сэнто)</strong>: Тату-дружелюбные или с частными ваннами (kashikiri) для тату на плече и голени. Цены: 490–3,000 JPY (~3–18 EUR).</li>
-                    <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
-                    <li><strong>График</strong>: Приезд 27 июня после обеда (~14:00–15:00), отъезд 5 июля утром (~08:00–09:00). Выезд 08:00–09:00, возврат 20:00–22:00. 2–4 активности в день, бани вечером/утром.</li>
-                    <li><strong>Бронирование</strong>:
-                        <ul>
-                            <li>Toei Kyoto Studio Park: за месяц (официальный сайт).</li>
-                            <li>Частные ванны в Kurama Onsen и Tenzan No Yu: за 1–2 недели.</li>
-                        </ul>
-                    </li>
+                    <li><a href="https://maps.app.goo.gl/nnRgr3TKiFLfptRJ9">Fushimi Inari Taisha <span class="rank">(4.7)</span></a>: Тысячи красных ворот тории, тропа на гору.</li>
+                    <li><a href="https://maps.app.goo.gl/njZrVqCYvk4ySDFS7">Kinkaku-ji <span class="rank">(4.6)</span></a>: Золотой павильон в саду.</li>
+                    <li><a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Arashiyama Bamboo Grove <span class="rank">(4.5)</span></a>: Бамбуковая роща, живописная тропа.</li>
+                    <li><a href="https://maps.app.goo.gl/kUx715Q15pYMnC6R9">Iwatayama Monkey Park <span class="rank">(4.4)</span></a>: Обезьяны и панорама Киото.</li>
+                    <li><a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Уличный рынок еды и сувениров.</li>
+                    <li><a href="https://maps.app.goo.gl/x6M19DW5oUzBkp936">Gion District <span class="rank">(4.4)</span></a>: Исторический район гейш.</li>
+                    <li><a href="https://maps.app.goo.gl/D5QXkbbXPKsHKgcx6">Kiyomizu-dera <span class="rank">(4.5)</span></a>: Храм с панорамной террасой.</li>
+                    <li><a href="https://maps.app.goo.gl/paFiK622wtsWzJ9Z8">Kyoto Imperial Palace <span class="rank">(4.3)</span></a>: Исторический дворец.</li>
+                    <li><a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a>: Самурайские декорации, шоу.</li>
+                    <li><a href="https://maps.app.goo.gl/Emr5BGnf64zVL28D9">Kyoto University Museum <span class="rank">(4.1)</span></a>: Наука и история.</li>
+                    <li><a href="https://maps.app.goo.gl/xgCrXoS33fu4m5EEA">Todai-ji Temple <span class="rank">(4.7)</span></a>: Храм с Великим Буддой.</li>
+                    <li><a href="https://maps.app.goo.gl/D9ajHfW5jgUTAb639">Nara Park <span class="rank">(4.6)</span></a>: Олени, сады, святилище.</li>
+                    <li><a href="https://maps.app.goo.gl/PwwTA2cowjUGvCfbA">Disaster Reduction and Human Renovation Institution <span class="rank">(4.5)</span></a>: Музей землетрясений, технологии.</li>
+                    <li><a href="https://maps.app.goo.gl/dhmXNVotsGSmmWkj7">Rokko Garden Terrace <span class="rank">(4.4)</span></a>: Смотровая площадка с видом на залив.</li>
+                </ul>
+                <h4>Еда</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a>: Тонкацу (свиная котлета).</li>
+                    <li><a href="https://maps.app.goo.gl/soPBdVLkHJUZBYhK8">Gion Kagizen Yoshifusa <span class="rank">(4.5)</span></a>: Вагаси и маття.</li>
+                    <li><a href="https://maps.app.goo.gl/RqhPpE7G67sryDHc6">Vermillion Cafe <span class="rank">(4.2)</span></a>: Сэндвичи и кофе.</li>
+                    <li><a href="https://maps.app.goo.gl/SabxMn4MdjnfcAvB8">Arashiyama Yoshimura <span class="rank">(4.1)</span></a>: Соба с тэмпурой.</li>
+                    <li><a href="https://maps.app.goo.gl/uh1EEm6AZHYgKUc56">Yudofu Sagano <span class="rank">(4.2)</span></a>: Юдофу (тофу в бульоне).</li>
+                    <li><a href="https://maps.app.goo.gl/yCsESn1n1svTz1Q3A">Arashiyama Kitcho <span class="rank">(4.3)</span></a>: Кайсэки.</li>
+                    <li><a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a>: Вагаси (ёкан).</li>
+                    <li><a href="https://maps.app.goo.gl/bZwq8NotJ1PAs9Ga7">Kameya <span class="rank">(4.2)</span></a>: Камамеши (рис в горшочке).</li>
+                    <li><a href="https://maps.app.goo.gl/BonZvXRkwAhVFn9QA">Nakatanidou <span class="rank">(4.5)</span></a>: Вагаси (моти).</li>
+                    <li><a href="https://maps.app.goo.gl/gFDjuWLAdWZQQ3CF9">Kobe Beef Yamato <span class="rank">(4.3)</span></a>: Кобе биф бургер.</li>
+                    <li><a href="https://maps.app.goo.gl/vSeCxi4mkAUssYGKA">Patisserie Montplus <span class="rank">(4.5)</span></a>: Маття-торт.</li>
+                    <li><strong>Saga Tofu Ine <span class="rank">(4.1)</span></strong>: Тофу-меню. Адрес: 19 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
+                    <li><strong>Uzumasa Ramen <span class="rank">(4.0)</span></strong>: Рамэн мисо. Адрес: 5-5 Uzumasa, Ukyo-ku, Kyoto.</li>
+                </ul>
+                <h4>Бани</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/xFuHY8KBGQeqPiec8">Funaoka Onsen <span class="rank">(4.4)</span></a>: Историческое сэнто, тату разрешены.</li>
+                    <li><a href="https://maps.app.goo.gl/BJ8zKX8T1fGcz1t29">Tenzan No Yu <span class="rank">(4.3)</span></a>: Онсэн, тату разрешены.</li>
+                    <li><a href="https://maps.app.goo.gl/iun1mTk3RmqpK23h8">Kurama Onsen <span class="rank">(4.3)</span></a>: Онсэн с частными ваннами, тату разрешены.</li>
+                    <li><a href="https://maps.app.goo.gl/M6qecXJhsG8n69sD8">Hana no Yu <span class="rank">(4.2)</span></a>: Сэнто, тату разрешены.</li>
+                    <li><a href="https://maps.app.goo.gl/2UMVdBkeEFbYm8yo8">Saga-Toriimoto Onsen <span class="rank">(4.2)</span></a>: Онсэн, тату разрешены.</li>
+                </ul>
+                <h4>Шопинг</h4>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Вагаси, керамика.</li>
+                    <li><a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a>: Вагаси, подарочная упаковка.</li>
+                    <li><a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a>: Самурайские фигурки.</li>
+                    <li><strong>Fushimi Inari <span class="rank">(4.0)</span></strong>: Фигурки лисиц, талисманы. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto.</li>
+                    <li><strong>Ginkaku-ji <span class="rank">(4.0)</span></strong>: Керамика, открытки. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto.</li>
+                    <li><strong>Arashiyama <span class="rank">(4.0)</span></strong>: Веера, кимоно. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
+                    <li><strong>Nara Park <span class="rank">(4.0)</span></strong>: Фигурки оленей, талисманы. Адрес: 469 Zoshicho, Nara, Nara Prefecture.</li>
+                    <li><strong>Sannomiya <span class="rank">(4.0)</span></strong>: Гаджеты, модные аксессуары. Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture.</li>
+                </ul>
+                <h4>Альтернативные места</h4>
+                <ul>
+                    <li><strong>Достопримечательности</strong></li>
+                    <li><a href="https://maps.app.goo.gl/4C2WXLnVdzNAE2z87"><strong>To-ji Temple <span class="rank">(4.4)</span></strong></a>: Храм с пагодой и блошиным рынком. Адрес: 1 Kujocho, Minami Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/zW345arkfUfzVZcW9">Philosopher’s Path <span class="rank">(4.3)</span></a>: Тропа вдоль канала с храмами.</li>
+                    <li><a href="https://maps.app.goo.gl/zCXgbNC6YWiqJSHMA">Ginkaku-ji <span class="rank">(4.4)</span></a>: Серебряный павильон и сад.</li>
+                    <li><a href="https://maps.app.goo.gl/iRFLn5xLscgScFMv6"><strong>Ryoan-ji <span class="rank">(4.3)</span></strong></a>: Храм с садом камней. Адрес: 13 Ryoanji Goryonoshitacho, Ukyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/ef14PaLpWSpZESgq9"><strong>Heian Shrine <span class="rank">(4.4)</span></strong></a>: Храм с обширным садом. Адрес: Okazaki Nishitennocho, Sakyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/BkgmwCTSSJnSVYNUA"><strong>Tenryu-ji <span class="rank">(4.4)</span></strong></a>: Храм дзэн с садом. Адрес: 68 Sagatenryuji Susukinobabacho, Ukyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/dVHspNEnbZ1aqYbf9"><strong>Nijo Castle <span class="rank">(4.4)</span></strong></a>: Замок сёгунов с садами. Адрес: 541 Nijojocho, Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/nvAzEcGY1Tk9fpLs6"><strong>Kobe Nunobiki Herb Garden <span class="rank">(4.3)</span></strong></a>: Травяной сад с канатной дорогой. Адрес: 1-4-3 Kitanocho, Chuo Ward, Kobe.</li>
+                    <li><a href="https://maps.app.goo.gl/CTgzBSaXGixsrBGH6"><strong>Kobe Port Tower <span class="rank">(4.2)</span></strong></a>: Смотровая башня у порта. Адрес: 2-2 Hatobacho, Chuo Ward, Kobe.</li>
+                    <li><a href="https://maps.app.goo.gl/CdZydW3fUrZKSvGU6"><strong>Meriken Park <span class="rank">(4.3)</span></strong></a>: Парк с видом на залив. Адрес: 2-2 Hatobacho, Chuo Ward, Kobe.</li>
+                    <li><strong>Еда</strong></li>
+                    <li><a href="https://maps.app.goo.gl/yi67xc3g4PBKpfT66"><strong>Kichi Kichi Omurice <span class="rank">(4.5)</span></strong></a>: Знаменитый омлет с рисом. Адрес: 185-4 Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/8KPW8aDba2kTNoSf7"><strong>Ippudo Kyoto <span class="rank">(4.2)</span></strong></a>: Рамэн тонкоцу. Адрес: 653-1 Bantoyacho, Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/8WVMQtaPoMGdduuJA"><strong>Kobe Chinatown <span class="rank">(4.2)</span></strong></a>: Китайские пельмени и булочки. Адрес: 1-2 Motomachidori, Chuo Ward, Kobe.</li>
+                    <li><strong>Шопинг</strong></li>
+                    <li><a href="https://maps.app.goo.gl/qEzMXkMKNrmUUZ9TA"><strong>Teramachi Street <span class="rank">(4.2)</span></strong></a>: Арт, книги, сувениры. Адрес: Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/1dqFxVhFrFXNsmdn7"><strong>Kyoto Handicraft Center <span class="rank">(4.1)</span></strong></a>: Традиционные ремесла. Адрес: 17 Shogoin Entomicho, Sakyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/BBsCNWAjsnCeiFvLA"><strong>AEON Mall Kyoto <span class="rank">(4.0)</span></strong></a>: Одежда и электроника. Адрес: 1 Nishikujo Toriiguchicho, Minami Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/HxFeTmhQRAkHcLG7A"><strong>Kawaramachi Street <span class="rank">(4.2)</span></strong></a>: Модные магазины. Адрес: Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/ivDwq4T1RUdJri6H9"><strong>Kyoto Nishiki Tenmangu <span class="rank">(4.3)</span></strong></a>: Сувениры у храма. Адрес: 537 Nakagyo Ward, Kyoto.</li>
+                    <li><a href="https://maps.app.goo.gl/TBYMo1CtbxzPphheA"><strong>Kobe Motomachi <span class="rank">(4.1)</span></strong></a>: Модные магазины. Адрес: 1-2 Motomachidori, Chuo Ward, Kobe.</li>
                 </ul>
             </div>
-
-            <div class="section">
-                <h2>День 1: 27 июня 2025 (Центр Киото, знакомство)</h2>
-                <h3>Тема: Гион, рынок, вагаси</h3>
-                <img src="images/gion_street.jpg" alt="Gion District streets" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/609+Nishidaimonjicho,+Nakagyo-ku,+Kyoto/605-0825+Gionmachi+Minamigawa,+Higashiyama-ku,+Kyoto/264+Gionmachi+Kitagawa,+Higashiyama-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 27 июня</a></p>
-                <ul>
-                    <li><strong>14:00–15:00 – Приезд и заселение</strong>: M's Hotel Sanjo Omiya. Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 1 час.</li>
-                    <li><strong>15:00–16:30 – <a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a></strong>: Традиционный рынок, еда, сувениры. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto. Время: 1.5 часа. Стоимость: бесплатно. Пешком 10 мин от отеля.</li>
-                    <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/x6M19DW5oUzBkp936">Gion District <span class="rank">(4.4)</span></a></strong>: Улочки гейш, храм Yasaka Shrine. Адрес: 605-0825 Gionmachi Minamigawa, Higashiyama-ku, Kyoto. Время: 2 часа. Стоимость: бесплатно. Пешком 15 мин.</li>
-                    <li><strong>19:30–20:30 – Ужин и сладости в <a href="https://maps.app.goo.gl/soPBdVLkHJUZBYhK8">Gion Kagizen Yoshifusa <span class="rank">(4.5)</span></a></strong>: Вагаси (моти, намагаши, ~1,000 JPY, ~6 EUR), маття. Адрес: 264 Gionmachi Kitagawa, Higashiyama-ku, Kyoto. Время: 1 час.</li>
-                    <li><strong>21:00 – Возврат в отель</strong>: Пешком 15 мин. Стоимость: 0 JPY.</li>
-                    <li><strong>Шопинг</strong>: Сувениры на Nishiki Market <span class="rank">(4.3)</span>: Вагаси, керамика. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~2,500 JPY (~15 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 2: 28 июня 2025 (Технологии и старина в центре)</h2>
-                <h3>Тема: Поезда, императорская история, сэнто</h3>
-                <img src="images/kyoto_palace.jpg" alt="Kyoto Imperial Palace" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/868+Kameya-cho,+Shimogyo-ku,+Kyoto/1-1+Nishi-Kyogoku,+Ukyo-ku,+Kyoto/1+Nishikyogoku+Shinmei-cho,+Ukyo-ku,+Kyoto/82-1+Minamifunaokacho,+Murasakino,+Kita-ku,+Kyoto+City/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 28 июня</a></p>
-                <ul>
-                    <li><strong>08:00–09:00 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/8mESTE5B5xNZrTiT8">Kyoto Railway Museum <span class="rank">(4.4)</span></a></strong>: Интерактивные экспонаты, симуляторы поездов. Адрес: 868 Kameya-cho, Shimogyo-ku, Kyoto. Время: 2.5 часа. Стоимость: 1,200 JPY (~7.2 EUR). Маршрут: метро Tozai Line до Nijo, затем пешком 15 мин (~300 JPY, ~1.8 EUR).</li>
-                    <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a></strong>: Тонкацу (свиная котлета, ~1,500 JPY, ~9 EUR). Адрес: 1 Nishi-Kyogoku, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/paFiK622wtsWzJ9Z8">Kyoto Imperial Palace <span class="rank">(4.3)</span></a></strong>: Сады, история. Адрес: 1 Nishikyogoku Shinmei-cho, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: бесплатно. Маршрут: автобус до Marutamachi (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>16:00–17:30 – Сладости в <a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a></strong>: Вагаси (ёкан, ~800 JPY, ~4.8 EUR). Адрес: 1 Ichijo-dori, Nakagyo-ku, Kyoto. Время: 1.5 часа. Пешком 10 мин.</li>
-                    <li><strong>18:00–20:00 – <a href="https://maps.app.goo.gl/xFuHY8KBGQeqPiec8">Funaoka Onsen <span class="rank">(4.4)</span></a></strong>: Историческое сэнто, тату разрешены. Горячие ванны, сауна, электрическая ванна (denkiburo). Адрес: 82-1 Minamifunaokacho, Murasakino, Kita-ku, Kyoto City. Время: 2 часа. Стоимость: 490 JPY (~2.9 EUR). Маршрут: автобус до Funaoka Onsen (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>20:30–21:00 – Возврат в отель</strong>: Автобус до Sanjo Keihan, затем пешком 5 мин (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Сувениры в Toraya Kyoto <span class="rank">(4.5)</span>: Вагаси, упаковка для подарков. Адрес: 1 Ichijo-dori, Nakagyo-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~4,480 JPY (~26.9 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 3: 29 июня 2025 (Юг Киото, храмы)</h2>
-                <h3>Тема: Храмы, святилища, онсэн</h3>
-                <img src="images/fushimi_inari.jpg" alt="Fushimi Inari Taisha torii gates" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/68+Fukakusa+Yabunouchicho,+Fushimi-ku,+Kyoto/1-294+Kiyomizu,+Higashiyama-ku,+Kyoto/55-4-7+Saga-Tenryuji,+Ukyo-ku,+Kyoto/3+Saga-Tenryuji,+Ukyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 29 июня</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/nnRgr3TKiFLfptRJ9">Fushimi Inari Taisha <span class="rank">(4.7)</span></a></strong>: Тысячи красных ворот тории. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto. Время: 2.5 часа. Стоимость: бесплатно. Маршрут: метро Tozai Line до Kyoto Station, затем JR Nara Line до Inari (~300 JPY, ~1.8 EUR).</li>
-                    <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/RqhPpE7G67sryDHc6">Vermillion Cafe <span class="rank">(4.2)</span></a></strong>: Сэндвичи и кофе (~1,200 JPY, ~7.2 EUR). Адрес: 1-294 Yoshidacho, Fushimi-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>13:30–16:00 – <a href="https://maps.app.goo.gl/D5QXkbbXPKsHKgcx6">Kiyomizu-dera <span class="rank">(4.5)</span></a></strong>: Храм с панорамой города. Адрес: 1-294 Kiyomizu, Higashiyama-ku, Kyoto. Время: 2.5 часа. Стоимость: 400 JPY (~2.4 EUR). Маршрут: автобус до Kiyomizu-michi (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>16:30–18:30 – <a href="https://maps.app.goo.gl/BJ8zKX8T1fGcz1t29">Tenzan No Yu <span class="rank">(4.3)</span></a></strong>: Онсэн, тату разрешены. Ванны, сауна, открытый ротэнбуро. Адрес: 55-4-7 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 1,200 JPY (~7.2 EUR). Маршрут: автобус до Saga Arashiyama (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>19:00–20:00 – Ужин в <a href="https://maps.app.goo.gl/SabxMn4MdjnfcAvB8">Arashiyama Yoshimura <span class="rank">(4.1)</span></a></strong>: Соба с тэмпурой (~1,500 JPY, ~9 EUR). Адрес: 3 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>20:30–21:00 – Возврат в отель</strong>: Автобус до Sanjo Keihan (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Сувениры у Fushimi Inari <span class="rank">(4.0)</span>: Фигурки лисиц, талисманы. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~5,280 JPY (~31.7 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 4: 30 июня 2025 (Северо-восток Киото)</h2>
-                <h3>Тема: Золотой павильон, философия, сэнто</h3>
-                <img src="images/kinkakuji.jpg" alt="Kinkaku-ji Golden Pavilion" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/1+Kinkakujicho,+Kita-ku,+Kyoto/45+Saga-Tenryuji,+Ukyo-ku,+Kyoto/44+Ginkakujicho,+Sakyo-ku,+Kyoto/1-294+Philosopher’s+Path,+Sakyo-ku,+Kyoto/1-1+Horikawa-dori,+Nakagyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 30 июня</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/kyt4jSmvs3o6U8wG6">FamilyMart Sanjo Omiya <span class="rank">(3.7)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-489 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/njZrVqCYvk4ySDFS7">Kinkaku-ji (Golden Pavilion) <span class="rank">(4.6)</span></a></strong>: Золотой храм и сады. Адрес: 1 Kinkakujicho, Kita-ku, Kyoto. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Маршрут: автобус до Kinkakuji-michi (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/uh1EEm6AZHYgKUc56">Yudofu Sagano <span class="rank">(4.2)</span></a></strong>: Юдофу (тофу в бульоне, ~1,500 JPY, ~9 EUR). Адрес: 45 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Маршрут: автобус (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/zCXgbNC6YWiqJSHMA">Ginkaku-ji (Silver Pavilion) <span class="rank">(4.4)</span></a></strong>: Храм и моховые сады. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Маршрут: автобус до Ginkakuji-michi (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>15:30–17:00 – <a href="https://maps.app.goo.gl/zW345arkfUfzVZcW9">Philosopher’s Path <span class="rank">(4.3)</span></a></strong>: Прогулка вдоль канала. Адрес: 1-294 Philosopher’s Path, Sakyo-ku, Kyoto. Время: 1.5 часа. Стоимость: бесплатно. Пешком 10 мин.</li>
-                    <li><strong>17:30–19:30 – <a href="https://maps.app.goo.gl/M6qecXJhsG8n69sD8">Hana no Yu <span class="rank">(4.2)</span></a></strong>: Сэнто, тату разрешены. Ванны, джакузи. Адрес: 1-1 Horikawa-dori, Nakagyo-ku, Kyoto. Время: 2 часа. Стоимость: 800 JPY (~4.8 EUR). Маршрут: автобус до Horikawa-dori (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>20:00–21:00 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
-                    <li><strong>Шопинг</strong>: Сувениры у Ginkaku-ji <span class="rank">(4.0)</span>: Керамика, открытки. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~4,720 JPY (~28.3 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 5: 1 июля 2025 (Арасияма)</h2>
-                <h3>Тема: Природа, обезьяны, онсэн</h3>
-                <img src="images/arashiyama_bamboo.jpg" alt="Arashiyama Bamboo Grove" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/20+Saga-Tenryuji,+Ukyo-ku,+Kyoto/58+Saga-Tenryuji,+Ukyo-ku,+Kyoto/8+Saga-Tenryuji,+Ukyo-ku,+Kyoto/1-1+Saga-Tenryuji,+Ukyo-ku,+Kyoto/19+Saga-Tenryuji,+Ukyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 1 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Arashiyama Bamboo Grove <span class="rank">(4.5)</span></a></strong>: Бамбуковая роща. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2.5 часа. Стоимость: бесплатно. Маршрут: метро Tozai Line до Kyoto Station, затем JR Sagano Line до Saga-Arashiyama (~400 JPY, ~2.4 EUR).</li>
-                    <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/yCsESn1n1svTz1Q3A">Arashiyama Kitcho <span class="rank">(4.3)</span></a></strong>: Кайсэки (традиционный обед, ~2,000 JPY, ~12 EUR). Адрес: 58 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/kUx715Q15pYMnC6R9">Iwatayama Monkey Park <span class="rank">(4.4)</span></a></strong>: Обезьяны, виды на Киото. Адрес: 8 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин.</li>
-                    <li><strong>16:00–18:00 – <a href="https://maps.app.goo.gl/2UMVdBkeEFbYm8yo8">Saga-Toriimoto Onsen <span class="rank">(4.2)</span></a></strong>: Онсэн, тату разрешены. Ротэнбуро, сауна. Адрес: 1-1 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR). Пешком 10 мин.</li>
-                    <li><strong>18:30–19:30 – Ужин в <a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Saga Tofu Ine <span class="rank">(4.1)</span></a></strong>: Тофу-меню (~1,500 JPY, ~9 EUR). Адрес: 19 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>20:00–21:00 – Возврат в отель</strong>: JR Sagano Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~400 JPY, ~2.4 EUR).</li>
-                    <li><strong>Шопинг</strong>: Сувениры в Arashiyama <span class="rank">(4.0)</span>: Веера, кимоно. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~6,400 JPY (~38.4 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 6: 2 июля 2025 (Киото и Курама)</h2>
-                <h3>Тема: Самураи, наука, онсэн</h3>
-                <img src="images/toei_studio.jpg" alt="Toei Kyoto Studio Park" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/10+Uzumasa+Higashi,+Ukyo-ku,+Kyoto/5-5+Uzumasa,+Ukyo-ku,+Kyoto/Yoshida-Honmachi,+Sakyo-ku,+Kyoto/520+Kurama+Honmachi,+Sakyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 2 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–12:00 – <a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a></strong>: Самурайские декорации, шоу. Адрес: 10 Uzumasa Higashi, Ukyo-ku, Kyoto. Время: 3 часа. Стоимость: 2,400 JPY (~14.4 EUR). Маршрут: метро Tozai Line до Uzumasa-Tenjingawa (~300 JPY, ~1.8 EUR).</li>
-                    <li><strong>12:30–13:30 – Обед в <a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Uzumasa Ramen <span class="rank">(4.0)</span></a></strong>: Рамэн мисо (~1,200 JPY, ~7.2 EUR). Адрес: 5-5 Uzumasa, Ukyo-ku, Kyoto. Время: 1 час. Пешком 5 мин.</li>
-                    <li><strong>14:00–16:00 – <a href="https://maps.app.goo.gl/Emr5BGnf64zVL28D9">Kyoto University Museum <span class="rank">(4.1)</span></a></strong>: Наука и история. Адрес: Yoshida-Honmachi, Sakyo-ku, Kyoto. Время: 2 часа. Стоимость: 400 JPY (~2.4 EUR). Маршрут: автобус до Kyoto University (~230 JPY, ~1.4 EUR).</li>
-                    <li><strong>16:30–19:30 – <a href="https://maps.app.goo.gl/iun1mTk3RmqpK23h8">Kurama Onsen <span class="rank">(4.3)</span></a></strong>: Онсэн с частными ваннами (kashikiri, тату OK). Ротэнбуро, сауна. Адрес: 520 Kurama Honmachi, Sakyo-ku, Kyoto. Время: 3 часа. Стоимость: 2,500 JPY (~15 EUR, kashikiri). Маршрут: Eizan Railway до Kurama (~450 JPY, ~2.7 EUR).</li>
-                    <li><strong>20:00–21:00 – Возврат в отель</strong>: Eizan Railway до Demachiyanagi, затем метро Tozai Line до Sanjo Keihan (~450 JPY, ~2.7 EUR).</li>
-                    <li><strong>Шопинг</strong>: Сувениры в Toei Kyoto Studio Park <span class="rank">(4.0)</span>: Самурайские фигурки. Адрес: 10 Uzumasa Higashi, Ukyo-ku, Kyoto.</li>
-                    <li><strong>Общая стоимость</strong>: ~7,480 JPY (~44.9 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 7: 3 июля 2025 (Поездка в Нара)</h2>
-                <h3>Тема: Олени, Великий Будда, сэнто</h3>
-                <img src="images/nara_deer.jpg" alt="Nara Park deer" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/406-1+Zoshicho,+Nara,+Nara+Prefecture/9-1+Higashimuki+Nakamachi,+Nara,+Nara+Prefecture/469+Zoshicho,+Nara,+Nara+Prefecture/29+Hashimotocho,+Nara,+Nara+Prefecture/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 3 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–10:00 – Переезд в Нара</strong>: JR Nara Line от Kyoto Station до Nara Station (~720 JPY, ~4.3 EUR). Время: 45 мин.</li>
-                    <li><strong>10:30–12:30 – <a href="https://maps.app.goo.gl/xgCrXoS33fu4m5EEA">Todai-ji Temple <span class="rank">(4.7)</span></a></strong>: Храм с Великим Буддой, исторические залы. Адрес: 406-1 Zoshicho, Nara, Nara Prefecture. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин от станции.</li>
-                    <li><strong>13:00–14:00 – Обед в <a href="https://maps.app.goo.gl/bZwq8NotJ1PAs9Ga7">Kameya <span class="rank">(4.2)</span></a></strong>: Камамеши (рис в горшочке, ~1,500 JPY, ~9 EUR). Адрес: 9-1 Higashimuki Nakamachi, Nara, Nara Prefecture. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/D9ajHfW5jgUTAb639">Nara Park <span class="rank">(4.6)</span></a></strong>: Олени, сады, святилище Касуга-тайша. Адрес: 469 Zoshicho, Nara, Nara Prefecture. Время: 2 часа. Стоимость: бесплатно (корм для оленей ~200 JPY, ~1.2 EUR). Пешком 5 мин.</li>
-                    <li><strong>17:00–18:30 – Сладости в <a href="https://maps.app.goo.gl/BonZvXRkwAhVFn9QA">Nakatanidou <span class="rank">(4.5)</span></a></strong>: Вагаси (моти, ~800 JPY, ~4.8 EUR). Адрес: 29 Hashimotocho, Nara, Nara Prefecture. Время: 1.5 часа. Пешком 10 мин.</li>
-                    <li><strong>21:30–22:30 – Возврат в Киото</strong>: JR Nara Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~720 JPY, ~4.3 EUR). Время: 1 час.</li>
-                    <li><strong>Шопинг</strong>: Сувениры в Nara Park <span class="rank">(4.0)</span>: Фигурки оленей, талисманы. Адрес: 469 Zoshicho, Nara, Nara Prefecture.</li>
-                    <li><strong>Общая стоимость</strong>: ~7,540 JPY (~45.2 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 8: 4 июля 2025 (Поездка в Кобе)</h2>
-                <h3>Тема: Технологии, современный город, смотровая площадка</h3>
-                <img src="images/kobe_view.jpg" alt="Rokko Garden Terrace view" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/1-5-2+Wakinohamakaigandori,+Chuo-ku,+Kobe,+Hyogo+Prefecture/1-1-1+Kitanagasadori,+Chuo-ku,+Kobe,+Hyogo+Prefecture/1877-9+Rokkosancho,+Nada-ku,+Kobe,+Hyogo+Prefecture/3-1-1+Shinoharaminamimachi,+Nada-ku,+Kobe,+Hyogo+Prefecture/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 4 июля</a></p>
-                <ul>
-                    <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>09:00–10:00 – Переезд в Кобе</strong>: JR Tokaido-Sanyo Line от Kyoto Station до Sannomiya Station (~1,100 JPY, ~6.6 EUR, ICOCA покрывает). Время: 50 мин.</li>
-                    <li><strong>10:30–12:30 – <a href="https://maps.app.goo.gl/PwwTA2cowjUGvCfbA">Disaster Reduction and Human Renovation Institution <span class="rank">(4.5)</span></a></strong>: Интерактивный музей землетрясений, симуляторы, технологии безопасности. Адрес: 1-5-2 Wakinohamakaigandori, Chuo-ku, Kobe, Hyogo Prefecture. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин от станции.</li>
-                    <li><strong>13:00–14:00 – Обед в <a href="https://maps.app.goo.gl/gFDjuWLAdWZQQ3CF9">Kobe Beef Yamato <span class="rank">(4.3)</span></a></strong>: Кобе биф бургер (~1,500 JPY, ~9 EUR). Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture. Время: 1 час. Пешком 10 мин.</li>
-                    <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/dhmXNVotsGSmmWkj7">Rokko Garden Terrace <span class="rank">(4.4)</span></a></strong>: Смотровая площадка с видом на залив, современные инсталляции. Адрес: 1877-9 Rokkosancho, Nada-ku, Kobe, Hyogo Prefecture. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR, фуникулёр). Фуникулёр от Rokko Station (~600 JPY, ~3.6 EUR).</li>
-                    <li><strong>17:00–18:30 – Сладости в <a href="https://maps.app.goo.gl/vSeCxi4mkAUssYGKA">Patisserie Montplus <span class="rank">(4.5)</span></a></strong>: Вагаси (маття-торт, ~800 JPY, ~4.8 EUR). Адрес: 3-1-1 Shinoharaminamimachi, Nada-ku, Kobe, Hyogo Prefecture. Время: 1.5 часа. Пешком 10 мин от Rokko Station.</li>
-                    <li><strong>21:30–22:30 – Возврат в Киото</strong>: JR Tokaido-Sanyo Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~1,100 JPY, ~6.6 EUR). Время: 1 час.</li>
-                    <li><strong>Шопинг</strong>: Сувениры в Sannomiya <span class="rank">(4.0)</span>: Гаджеты, модные аксессуары. Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture.</li>
-                    <li><strong>Общая стоимость</strong>: ~10,800 JPY (~64.8 EUR).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>День 9: 5 июля 2025 (Киото, отъезд)</h2>
-                <h3>Тема: Финальный шопинг, отдых</h3>
-                <img src="images/nishiki_market.jpg" alt="Nishiki Market" class="day-image">
-                <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/609+Nishidaimonjicho,+Nakagyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 5 июля</a></p>
-                <ul>
-                    <li><strong>07:30–08:00 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
-                    <li><strong>08:00–11:00 – Шопинг</strong>: Сувениры на <a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Вагаси, керамика. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto. Время: 3 часа.</li>
-                    <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a></strong>: Тонкацу (~1,500 JPY, ~9 EUR). Адрес: 1 Nishi-Kyogoku, Ukyo-ku, Kyoto. Время: 1 час. Маршрут: метро Tozai Line до Kyoto Station (~300 JPY, ~1.8 EUR).</li>
-                    <li><strong>13:00 – Выезд</strong>:
-                        <ul>
-                            <li>Киото → аэропорт Кансай (JR Haruka Express, 80 мин, 2,850 JPY, ~17.1 EUR).</li>
-                            <li>Или: Киото → Токио (Shinkansen Nozomi, 2.5 часа, 13,000 JPY, ~78 EUR) для рейса из Ханэды/Нариты.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Общая стоимость</strong>: ~5,150 JPY (~30.9 EUR, без учета переезда).</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>Создание Google My Maps</h2>
-                <ul>
-                    <li>Зайдите в Google My Maps (<a href="https://www.google.com/maps/d/">www.google.com/maps/d/</a>).</li>
-                    <li>Создайте новую карту, добавьте слои (Фудзи, Киото, Нара, Кобе).</li>
-                    <li>Импортируйте адреса из маршрутов (копируйте из ссылок Google Maps).</li>
-                    <li>Настройте метки (иконки, цвета) для достопримечательностей, еды, шопинга.</li>
-                    <li>Сохраните и используйте офлайн через приложение Google Maps.</li>
-                </ul>
-            </div>
-
-            <div class="section">
-                <h2>Общая стоимость поездки</h2>
-                <ul>
-                    <li><strong>Фудзи (2 дня)</strong>: ~8,600 JPY (~51.6 EUR).</li>
-                    <li><strong>Киото, Нара, Кобе (9 дней)</strong>: ~49,860 JPY (~299.2 EUR).</li>
-                    <li><strong>Переезды</strong>: ~17,470 JPY (~104.8 EUR, включая Shinkansen, JR Haruka).</li>
-                    <li><strong>Итого</strong>: ~75,930 JPY (~455.6 EUR, без отелей, покупок, билетов на самолет).</li>
-                </ul>
-            </div>
-
-            <button onclick="exportToExcel()">Экспорт в Excel</button>
         </div>
-    </main>
 
-    <footer>
-        <p>&copy; 2025 Путешествие по Японии</p>
-    </footer>
+        <div class="section">
+            <h2>Общая информация</h2>
+            <ul>
+                <li><strong>Отель</strong>: <a href="https://maps.app.goo.gl/8mESTE5B5xNZrTiT8">M's Hotel Sanjo Omiya <span class="rank">(4.0)</span></a>. Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Центр, 5 мин от метро Sanjo Keihan, рядом Nishiki Market, Gion.</li>
+                <li><strong>Транспорт</strong>:
+                    <ul>
+                        <li>Переезд 27 июня: Gotemba → Kyoto (Shinkansen Nozomi через Mishima, ~2.5 часа, 12,000 JPY, ~72 EUR).</li>
+                        <li>Местный транспорт: Kyoto City Subway (Karasuma Line, Tozai Line), автобусы, поезда JR (до Арасиямы, Нары, Кобе).</li>
+                        <li>Карта ICOCA (2,000 JPY, ~12 EUR, депозит 500 JPY). Работает в Киото, Наре, Кобе.</li>
+                        <li>Время и стоимость: по Google Maps/Navitime.</li>
+                    </ul>
+                </li>
+                <li><strong>Курс</strong>: 1 JPY ≈ 0.006 EUR (апрель 2025).</li>
+                <li><strong>Погода</strong>: Сезон дождей (15–25°C, влажно). Зонты, легкая одежда, удобная обувь.</li>
+                <li><strong>Питание</strong>: Бюджет 1,000–2,500 JPY (~6–15 EUR) на обед/ужин. Завтраки: 500–1,500 JPY (~3–9 EUR). Японская кухня: кайсэки, вагаси, рамен.</li>
+                <li><strong>Бани (онсэн/сэнто)</strong>: Тату-дружелюбные или с частными ваннами (kashikiri) для тату на плече и голени. Цены: 490–3,000 JPY (~3–18 EUR).</li>
+                <li><strong>Google Maps</strong>: Ссылки на маршруты (до 10 точек). Для полной карты создайте Google My Maps (инструкции в конце).</li>
+                <li><strong>График</strong>: Приезд 27 июня после обеда (~14:00–15:00), отъезд 5 июля утром (~08:00–09:00). Выезд 08:00–09:00, возврат 20:00–22:00. 2–4 активности в день, бани вечером/утром.</li>
+                <li><strong>Бронирование</strong>:
+                    <ul>
+                        <li>Toei Kyoto Studio Park: за месяц (официальный сайт).</li>
+                        <li>Частные ванны в Kurama Onsen и Tenzan No Yu: за 1–2 недели.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
 
-    <script src="scripts.js"></script>
+        <div class="section">
+            <h2>День 1: 27 июня 2025 (Центр Киото, знакомство)</h2>
+            <h3>Тема: Гион, рынок, вагаси</h3>
+            <img src="images/gion_street.jpg" alt="Gion District streets">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/609+Nishidaimonjicho,+Nakagyo-ku,+Kyoto/605-0825+Gionmachi+Minamigawa,+Higashiyama-ku,+Kyoto/264+Gionmachi+Kitagawa,+Higashiyama-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 27 июня</a></p>
+            <ul>
+                <li><strong>14:00–15:00 – Приезд и заселение</strong>: M's Hotel Sanjo Omiya. Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 1 час.</li>
+                <li><strong>15:00–16:30 – <a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a></strong>: Традиционный рынок, еда, сувениры. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto. Время: 1.5 часа. Стоимость: бесплатно. П0800 от отеля.</li>
+                <li><strong>17:00–19:00 – <a href="https://maps.app.goo.gl/x6M19DW5oUzBkp936">Gion District <span class="rank">(4.4)</span></a></strong>: Улочки гейш, храм Yasaka Shrine. Адрес: 605-0825 Gionmachi Minamigawa, Higashiyama-ku, Kyoto. Время: 2 часа. Стоимость: бесплатно. Пешком 15 мин.</li>
+                <li><strong>19:30–20:30 – Ужин и сладости в <a href="https://maps.app.goo.gl/soPBdVLkHJUZBYhK8">Gion Kagizen Yoshifusa <span class="rank">(4.5)</span></a></strong>: Вагаси (моти, намагаши, ~1,000 JPY, ~6 EUR), маття. Адрес: 264 Gionmachi Kitagawa, Higashiyama-ku, Kyoto. Время: 1 час.</li>
+                <li><strong>21:00 – Возврат в отель</strong>: Пешком 15 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: Сувениры на Nishiki Market <span class="rank">(4.3)</span>: Вагаси, керамика. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~2,500 JPY (~15 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 2: 28 июня 2025 (Технологии и старина в центре)</h2>
+            <h3>Тема: Поезда, императорская история, сэнто</h3>
+            <img src="images/kyoto_palace.jpg" alt="Kyoto Imperial Palace">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/868+Kameya-cho,+Shimogyo-ku,+Kyoto/1-1+Nishi-Kyogoku,+Ukyo-ku,+Kyoto/1+Nishikyogoku+Shinmei-cho,+Ukyo-ku,+Kyoto/82-1+Minamifunaokacho,+Murasakino,+Kita-ku,+Kyoto+City/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 28 июня</a></p>
+            <ul>
+                <li><strong>08:00–09:00 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/8mESTE5B5xNZrTiT8">Kyoto Railway Museum <span class="rank">(4.4)</span></a></strong>: Интерактивные экспонаты, симуляторы поездов. Адрес: 868 Kameya-cho, Shimogyo-ku, Kyoto. Время: 2.5 часа. Стоимость: 1,200 JPY (~7.2 EUR). Маршрут: метро Tozai Line до Nijo, затем пешком 15 мин (~300 JPY, ~1.8 EUR).</li>
+                <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a></strong>: Тонкацу (свиная котлета, ~1,500 JPY, ~9 EUR). Адрес: 1 Nishi-Kyogoku, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/paFiK622wtsWzJ9Z8">Kyoto Imperial Palace <span class="rank">(4.3)</span></a></strong>: Сады, история. Адрес: 1 Nishikyogoku Shinmei-cho, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: бесплатно. Маршрут: автобус до Marutamachi (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>16:00–17:30 – Сладости в <a href="https://maps.app.goo.gl/DV75bUGq2zZG1aQZ8">Toraya Kyoto <span class="rank">(4.5)</span></a></strong>: Вагаси (ёкан, ~800 JPY, ~4.8 EUR). Адрес: 1 Ichijo-dori, Nakagyo-ku, Kyoto. Время: 1.5 часа. Пешком 10 мин.</li>
+                <li><strong>18:00–20:00 – <a href="https://maps.app.goo.gl/xFuHY8KBGQeqPiec8">Funaoka Onsen <span class="rank">(4.4)</span></a></strong>: Историческое сэнто, тату разрешены. Горячие ванны, сауна, электрическая ванна (denkiburo). Адрес: 82-1 Minamifunaokacho, Murasakino, Kita-ku, Kyoto City. Время: 2 часа. Стоимость: 490 JPY (~2.9 EUR). Маршрут: автобус до Funaoka Onsen (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>20:30–21:00 – Возврат в отель</strong>: Автобус до Sanjo Keihan, затем пешком 5 мин (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Сувениры в Toraya Kyoto <span class="rank">(4.5)</span>: Вагаси, упаковка для подарков. Адрес: 1 Ichijo-dori, Nakagyo-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~4,480 JPY (~26.9 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 3: 29 июня 2025 (Юг Киото, храмы)</h2>
+            <h3>Тема: Храмы, святилища, онсэн</h3>
+            <img src="images/fushimi_inari.jpg" alt="Fushimi Inari Taisha torii gates">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/68+Fukakusa+Yabunouchicho,+Fushimi-ku,+Kyoto/1-294+Kiyomizu,+Higashiyama-ku,+Kyoto/55-4-7+Saga-Tenryuji,+Ukyo-ku,+Kyoto/3+Saga-Tenryuji,+Ukyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 29 июня</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/nnRgr3TKiFLfptRJ9">Fushimi Inari Taisha <span class="rank">(4.7)</span></a></strong>: Тысячи красных ворот тории. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto. Время: 2.5 часа. Стоимость: бесплатно. Маршрут: метро Tozai Line до Kyoto Station, затем JR Nara Line до Inari (~300 JPY, ~1.8 EUR).</li>
+                <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/RqhPpE7G67sryDHc6">Vermillion Cafe <span class="rank">(4.2)</span></a></strong>: Сэндвичи и кофе (~1,200 JPY, ~7.2 EUR). Адрес: 1-294 Yoshidacho, Fushimi-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>13:30–16:00 – <a href="https://maps.app.goo.gl/D5QXkbbXPKsHKgcx6">Kiyomizu-dera <span class="rank">(4.5)</span></a></strong>: Храм с панорамой города. Адрес: 1-294 Kiyomizu, Higashiyama-ku, Kyoto. Время: 2.5 часа. Стоимость: 400 JPY (~2.4 EUR). Маршрут: автобус до Kiyomizu-michi (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>16:30–18:30 – <a href="https://maps.app.goo.gl/BJ8zKX8T1fGcz1t29">Tenzan No Yu <span class="rank">(4.3)</span></a></strong>: Онсэн, тату разрешены. Ванны, сауна, открытый ротэнбуро. Адрес: 55-4-7 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 1,200 JPY (~7.2 EUR). Маршрут: автобус до Saga Arashiyama (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>19:00–20:00 – Ужин в <a href="https://maps.app.goo.gl/SabxMn4MdjnfcAvB8">Arashiyama Yoshimura <span class="rank">(4.1)</span></a></strong>: Соба с тэмпурой (~1,500 JPY, ~9 EUR). Адрес: 3 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>20:30–21:00 – Возврат в отель</strong>: Автобус до Sanjo Keihan (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Сувениры у Fushimi Inari <span class="rank">(4.0)</span>: Фигурки лисиц, талисманы. Адрес: 68 Fukakusa Yabunouchicho, Fushimi-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~5,280 JPY (~31.7 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 4: 30 июня 2025 (Северо-восток Киото)</h2>
+            <h3>Тема: Золотой павильон, философия, сэнто</h3>
+            <img src="images/kinkakuji.jpg" alt="Kinkaku-ji Golden Pavilion">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/1+Kinkakujicho,+Kita-ku,+Kyoto/45+Saga-Tenryuji,+Ukyo-ku,+Kyoto/44+Ginkakujicho,+Sakyo-ku,+Kyoto/1-294+Philosopher’s+Path,+Sakyo-ku,+Kyoto/1-1+Horikawa-dori,+Nakagyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 30 июня</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/kyt4jSmvs3o6U8wG6">FamilyMart Sanjo Omiya <span class="rank">(3.7)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-489 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–11:00 – <a href="https://maps.app.goo.gl/njZrVqCYvk4ySDFS7">Kinkaku-ji (Golden Pavilion) <span class="rank">(4.6)</span></a></strong>: Золотой храм и сады. Адрес: 1 Kinkakujicho, Kita-ku, Kyoto. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Маршрут: автобус до Kinkakuji-michi (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/uh1EEm6AZHYgKUc56">Yudofu Sagano <span class="rank">(4.2)</span></a></strong>: Юдофу (тофу в бульоне, ~1,500 JPY, ~9 EUR). Адрес: 45 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Маршрут: автобус (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>13:00–15:00 – <a href="https://maps.app.goo.gl/zCXgbNC6YWiqJSHMA">Ginkaku-ji (Silver Pavilion) <span class="rank">(4.4)</span></a></strong>: Храм и моховые сады. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto. Время: 2 часа. Стоимость: 500 JPY (~3 EUR). Маршрут: автобус до Ginkakuji-michi (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>15:30–17:00 – <a href="https://maps.app.goo.gl/zW345arkfUfzVZcW9">Philosopher’s Path <span class="rank">(4.3)</span></a></strong>: Прогулка вдоль канала. Адрес: 1-294 Philosopher’s Path, Sakyo-ku, Kyoto. Время: 1.5 часа. Стоимость: бесплатно. Пешком 10 мин.</li>
+                <li><strong>17:30–19:30 – <a href="https://maps.app.goo.gl/M6qecXJhsG8n69sD8">Hana no Yu <span class="rank">(4.2)</span></a></strong>: Сэнто, тату разрешены. Ванны, джакузи. Адрес: 1-1 Horikawa-dori, Nakagyo-ku, Kyoto. Время: 2 часа. Стоимость: 800 JPY (~4.8 EUR). Маршрут: автобус до Horikawa-dori (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>20:00–21:00 – Возврат в отель</strong>: Пешком 10 мин. Стоимость: 0 JPY.</li>
+                <li><strong>Шопинг</strong>: Сувениры у Ginkaku-ji <span class="rank">(4.0)</span>: Керамика, открытки. Адрес: 44 Ginkakujicho, Sakyo-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~4,720 JPY (~28.3 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 5: 1 июля 2025 (Арасияма)</h2>
+            <h3>Тема: Природа, обезьяны, онсэн</h3>
+            <img src="images/arashiyama_bamboo.jpg" alt="Arashiyama Bamboo Grove">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/20+Saga-Tenryuji,+Ukyo-ku,+Kyoto/58+Saga-Tenryuji,+Ukyo-ku,+Kyoto/8+Saga-Tenryuji,+Ukyo-ku,+Kyoto/1-1+Saga-Tenryuji,+Ukyo-ku,+Kyoto/19+Saga-Tenryuji,+Ukyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 1 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–11:30 – <a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Arashiyama Bamboo Grove <span class="rank">(4.5)</span></a></strong>: Бамбуковая роща. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2.5 часа. Стоимость: бесплатно. Маршрут: метро Tozai Line до Kyoto Station, затем JR Sagano Line до Saga-Arashiyama (~400 JPY, ~2.4 EUR).</li>
+                <li><strong>12:00–13:00 – Обед в <a href="https://maps.app.goo.gl/yCsESn1n1svTz1Q3A">Arashiyama Kitcho <span class="rank">(4.3)</span></a></strong>: Кайсэки (традиционный обед, ~2,000 JPY, ~12 EUR). Адрес: 58 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>13:30–15:30 – <a href="https://maps.app.goo.gl/kUx715Q15pYMnC6R9">Iwatayama Monkey Park <span class="rank">(4.4)</span></a></strong>: Обезьяны, виды на Киото. Адрес: 8 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин.</li>
+                <li><strong>16:00–18:00 – <a href="https://maps.app.goo.gl/2UMVdBkeEFbYm8yo8">Saga-Toriimoto Onsen <span class="rank">(4.2)</span></a></strong>: Онсэн, тату разрешены. Ротэнбуро, сауна. Адрес: 1-1 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR). Пешком 10 мин.</li>
+                <li><strong>18:30–19:30 – Ужин в <a href="https://maps.app.goo.gl/TTMkeauS2R6iA2es8">Saga Tofu Ine <span class="rank">(4.1)</span></a></strong>: Тофу-меню (~1,500 JPY, ~9 EUR). Адрес: 19 Saga-Tenryuji, Ukyo-ku, Kyoto. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>20:00–21:00 – Возврат в отель</strong>: JR Sagano Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~400 JPY, ~2.4 EUR).</li>
+                <li><strong>Шопинг</strong>: Сувениры в Arashiyama <span class="rank">(4.0)</span>: Веера, кимоно. Адрес: 20 Saga-Tenryuji, Ukyo-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~6,400 JPY (~38.4 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 6: 2 июля 2025 (Киото и Курама)</h2>
+            <h3>Тема: Самураи, наука, онсэн</h3>
+            <img src="images/toei_studio.jpg" alt="Toei Kyoto Studio Park">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/10+Uzumasa+Higashi,+Ukyo-ku,+Kyoto/5-5+Uzumasa,+Ukyo-ku,+Kyoto/Yoshida-Honmachi,+Sakyo-ku,+Kyoto/520+Kurama+Honmachi,+Sakyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 2 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–12:00 – <a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Toei Kyoto Studio Park <span class="rank">(4.2)</span></a></strong>: Самурайские декорации, шоу. Адрес: 10 Uzumasa Higashi, Ukyo-ku, Kyoto. Время: 3 часа. Стоимость: 2,400 JPY (~14.4 EUR). Маршрут: метро Tozai Line до Uzumasa-Tenjingawa (~300 JPY, ~1.8 EUR).</li>
+                <li><strong>12:30–13:30 – Обед в <a href="https://maps.app.goo.gl/bhBPhd4LcisBxCUY9">Uzumasa Ramen <span class="rank">(4.0)</span></a></strong>: Рамэн мисо (~1,200 JPY, ~7.2 EUR). Адрес: 5-5 Uzumasa, Ukyo-ku, Kyoto. Время: 1 час. Пешком 5 мин.</li>
+                <li><strong>14:00–16:00 – <a href="https://maps.app.goo.gl/Emr5BGnf64zVL28D9">Kyoto University Museum <span class="rank">(4.1)</span></a></strong>: Наука и история. Адрес: Yoshida-Honmachi, Sakyo-ku, Kyoto. Время: 2 часа. Стоимость: 400 JPY (~2.4 EUR). Маршрут: автобус до Kyoto University (~230 JPY, ~1.4 EUR).</li>
+                <li><strong>16:30–19:30 – <a href="https://maps.app.goo.gl/iun1mTk3RmqpK23h8">Kurama Onsen <span class="rank">(4.3)</span></a></strong>: Онсэн с частными ваннами (kashikiri, тату OK). Ротэнбуро, сауна. Адрес: 520 Kurama Honmachi, Sakyo-ku, Kyoto. Время: 3 часа. Стоимость: 2,500 JPY (~15 EUR, kashikiri). Маршрут: Eizan Railway до Kurama (~450 JPY, ~2.7 EUR).</li>
+                <li><strong>20:00–21:00 – Возврат в отель</strong>: Eizan Railway до Demachiyanagi, затем метро Tozai Line до Sanjo Keihan (~450 JPY, ~2.7 EUR).</li>
+                <li><strong>Шопинг</strong>: Сувениры в Toei Kyoto Studio Park <span class="rank">(4.0)</span>: Самурайские фигурки. Адрес: 10 Uzumasa Higashi, Ukyo-ku, Kyoto.</li>
+                <li><strong>Общая стоимость</strong>: ~7,480 JPY (~44.9 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 7: 3 июля 2025 (Поездка в Нара)</h2>
+            <h3>Тема: Олени, Великий Будда, сэнто</h3>
+            <img src="images/nara_deer.jpg" alt="Nara Park deer">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/406-1+Zoshicho,+Nara,+Nara+Prefecture/9-1+Higashimuki+Nakamachi,+Nara,+Nara+Prefecture/469+Zoshicho,+Nara,+Nara+Prefecture/29+Hashimotocho,+Nara,+Nara+Prefecture/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 3 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и кофе в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–10:00 – Переезд в Нара</strong>: JR Nara Line от Kyoto Station до Nara Station (~720 JPY, ~4.3 EUR). Время: 45 мин.</li>
+                <li><strong>10:30–12:30 – <a href="https://maps.app.goo.gl/xgCrXoS33fu4m5EEA">Todai-ji Temple <span class="rank">(4.7)</span></a></strong>: Храм с Великим Буддой, исторические залы. Адрес: 406-1 Zoshicho, Nara, Nara Prefecture. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин от станции.</li>
+                <li><strong>13:00–14:00 – Обед в <a href="https://maps.app.goo.gl/bZwq8NotJ1PAs9Ga7">Kameya <span class="rank">(4.2)</span></a></strong>: Камамеши (рис в горшочке, ~1,500 JPY, ~9 EUR). Адрес: 9-1 Higashimuki Nakamachi, Nara, Nara Prefecture. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/D9ajHfW5jgUTAb639">Nara Park <span class="rank">(4.6)</span></a></strong>: Олени, сады, святилище Касуга-тайша. Адрес: 469 Zoshicho, Nara, Nara Prefecture. Время: 2 часа. Стоимость: бесплатно (корм для оленей ~200 JPY, ~1.2 EUR). Пешком 5 мин.</li>
+                <li><strong>17:00–18:30 – Сладости в <a href="https://maps.app.goo.gl/BonZvXRkwAhVFn9QA">Nakatanidou <span class="rank">(4.5)</span></a></strong>: Вагаси (моти, ~800 JPY, ~4.8 EUR). Адрес: 29 Hashimotocho, Nara, Nara Prefecture. Время: 1.5 часа. Пешком 10 мин.</li>
+                <li><strong>19:00–20:00 – Возврат в Киото</strong>: JR Nara Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~720 JPY, ~4.3 EUR). Время: 1 час.</li>
+                <li><strong>Шопинг</strong>: Сувениры в Nara Park <span class="rank">(4.0)</span>: Фигурки оленей, талисманы. Адрес: 469 Zoshicho, Nara, Nara Prefecture.</li>
+                <li><strong>Общая стоимость</strong>: ~4,540 JPY (~27.2 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 8: 4 июля 2025 (Поездка в Кобе)</h2>
+            <h3>Тема: Технологии, современный город, смотровая площадка</h3>
+            <img src="images/kobe_view.jpg" alt="Rokko Garden Terrace view">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/1-5-2+Wakinohamakaigandori,+Chuo-ku,+Kobe,+Hyogo+Prefecture/1-1-1+Kitanagasadori,+Chuo-ku,+Kobe,+Hyogo+Prefecture/1877-9+Rokkosancho,+Nada-ku,+Kobe,+Hyogo+Prefecture/3-1-1+Shinoharaminamimachi,+Nada-ku,+Kobe,+Hyogo+Prefecture/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 4 июля</a></p>
+            <ul>
+                <li><strong>08:00–08:30 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/wy4FEESYvzAYUaZ98">Lawson Sanjo Omiya <span class="rank">(3.9)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-490 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>09:00–10:00 – Переезд в Кобе</strong>: JR Tokaido-Sanyo Line от Kyoto Station до Sannomiya Station (~1,100 JPY, ~6.6 EUR, ICOCA покрывает). Время: 50 мин.</li>
+                <li><strong>10:30–12:30 – <a href="https://maps.app.goo.gl/PwwTA2cowjUGvCfbA">Disaster Reduction and Human Renovation Institution <span class="rank">(4.5)</span></a></strong>: Интерактивный музей землетрясений, симуляторы, технологии безопасности. Адрес: 1-5-2 Wakinohamakaigandori, Chuo-ku, Kobe, Hyogo Prefecture. Время: 2 часа. Стоимость: 600 JPY (~3.6 EUR). Пешком 15 мин от станции.</li>
+                <li><strong>13:00–14:00 – Обед в <a href="https://maps.app.goo.gl/gFDjuWLAdWZQQ3CF9">Kobe Beef Yamato <span class="rank">(4.3)</span></a></strong>: Кобе биф бургер (~1,500 JPY, ~9 EUR). Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture. Время: 1 час. Пешком 10 мин.</li>
+                <li><strong>14:30–16:30 – <a href="https://maps.app.goo.gl/dhmXNVotsGSmmWkj7">Rokko Garden Terrace <span class="rank">(4.4)</span></a></strong>: Смотровая площадка с видом на залив, современные инсталляции. Адрес: 1877-9 Rokkosancho, Nada-ku, Kobe, Hyogo Prefecture. Время: 2 часа. Стоимость: 1,000 JPY (~6 EUR, фуникулёр). Фуникулёр от Rokko Station (~600 JPY, ~3.6 EUR).</li>
+                <li><strong>17:00–18:30 – Сладости в <a href="https://maps.app.goo.gl/vSeCxi4mkAUssYGKA">Patisserie Montplus <span class="rank">(4.5)</span></a></strong>: Вагаси (маття-торт, ~800 JPY, ~4.8 EUR). Адрес: 3-1-1 Shinoharaminamimachi, Nada-ku, Kobe, Hyogo Prefecture. Время: 1.5 часа. Пешком 10 мин от Rokko Station.</li>
+                <li><strong>19:00–20:00 – Возврат в Киото</strong>: JR Tokaido-Sanyo Line до Kyoto Station, затем метро Tozai Line до Sanjo Keihan (~1,100 JPY, ~6.6 EUR). Время: 1 час.</li>
+                <li><strong>Шопинг</strong>: Сувениры в Sannomiya <span class="rank">(4.0)</span>: Гаджеты, модные аксессуары. Адрес: 1-1-1 Kitanagasadori, Chuo-ku, Kobe, Hyogo Prefecture.</li>
+                <li><strong>Общая стоимость</strong>: ~7,200 JPY (~43.2 EUR).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>День 9: 5 июля 2025 (Киото, отъезд)</h2>
+            <h3>Тема: Финальный шопинг, отдых</h3>
+            <img src="images/nishiki_market.jpg" alt="Nthermarket">
+            <p><strong>Google Maps маршрут</strong>: <a href="https://www.google.com/maps/dir/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto/609+Nishidaimonjicho,+Nakagyo-ku,+Kyoto/2-488-1+Kiyacho,+Nakagyo-ku,+Kyoto">Маршрут 5 июля</a></p>
+            <ul>
+                <li><strong>07:30–08:00 – Завтрак</strong>: Онигири и чай в <a href="https://maps.app.goo.gl/THhCNwgNEuqKQgja9">7-Eleven Sanjo Omiya <span class="rank">(3.8)</span></a> (~500 JPY, ~3 EUR). Адрес: 2-488-1 Kiyacho, Nakagyo-ku, Kyoto. Время: 30 мин.</li>
+                <li><strong>08:00–11:00 – Шопинг</strong>: Сувениры на <a href="https://maps.app.goo.gl/zoi2uXnDhkcU69h87">Nishiki Market <span class="rank">(4.3)</span></a>: Вагаси, керамика. Адрес: 609 Nishidaimonjicho, Nakagyo-ku, Kyoto. Время: 3 часа.</li>
+                <li><strong>11:30–12:30 – Обед в <a href="https://maps.app.goo.gl/vQURY2pG829YZdsdA">Katsukura Kyoto Station <span class="rank">(4.2)</span></a></strong>: Тонкацу (~1,500 JPY, ~9 EUR). Адрес: 1 Nishi-Kyogoku, Ukyo-ku, Kyoto. Время: 1 час. Маршрут: метро Tozai Line до Kyoto Station (~300 JPY, ~1.8 EUR).</li>
+                <li><strong>13:00 – Выезд</strong>:
+                    <ul>
+                        <li>Киото → аэропорт Кансай (JR Haruka Express, 80 мин, 2,850 JPY, ~17.1 EUR).</li>
+                        <li>Или: Киото → Токио (Shinkansen Nozomi, 2.5 часа, 13,000 JPY, ~78 EUR) для рейса из Ханэды/Нариты.</li>
+                    </ul>
+                </li>
+                <li><strong>Общая стоимость</strong>: ~5,150 JPY (~30.9 EUR, без учета переезда).</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Создание Google My Maps</h2>
+            <ul>
+                <li>Зайдите в Google My Maps (<a href="https://www.google.com/maps/d/">www.google.com/maps/d/</a>).</li>
+                <li>Создайте новую карту, добавьте слои (Фудзи, Киото, Нара, Кобе).</li>
+                <li>Импортируйте адреса из маршрутов (копируйте из ссылок Google Maps).</li>
+                <li>Настройте метки (иконки, цвета) для достопримечательностей, еды, шопинга.</li>
+                <li>Сохраните и используйте офлайн через приложение Google Maps.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Общая стоимость поездки</h2>
+            <ul>
+                <li><strong>Фудзи (2 дня)</strong>: ~8,600 JPY (~51.6 EUR).</li>
+                <li><strong>Киото, Нара, Кобе (9 дней)</strong>: ~49,860 JPY (~299.2 EUR).</li>
+                <li><strong>Переезды</strong>: ~17,470 JPY (~104.8 EUR,ресса, включая Shinkansen, JR Haruka).</li>
+                <li><strong>Итого</strong>: ~75,930 JPY (~455.6 EUR, без отелей, покупок, билетов на самолет).</li>
+            </ul>
+        </div>
+
+        <button onclick="exportToExcel()">Экспорт в Excel</button>
+        <a href="index.html" class="back-to-top">В начало</a>
+    </div>
 </body>
 </html>
