@@ -1,20 +1,24 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 40px;
+    margin: 20px;
     background-color: #f4f4f9;
     color: #333;
 }
 .header {
     text-align: center;
+    margin-bottom: 20px;
 }
 h1 {
     color: #2c3e50;
+    font-size: 24px;
 }
 h2 {
     color: #2980b9;
+    font-size: 20px;
 }
 h3 {
     color: #e74c3c;
+    font-size: 18px;
 }
 ul {
     list-style-type: none;
@@ -32,8 +36,8 @@ a:hover {
 }
 .section {
     background: #fff;
-    padding: 20px;
-    margin: 20px 0;
+    padding: 15px;
+    margin: 15px 0;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -51,21 +55,22 @@ a:hover {
 }
 .nav {
     text-align: center;
-    margin: 20px 0;
+    margin: 15px 0;
 }
 .nav ul {
-    display: flex;
-    justify-content: center;
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 .nav ul li {
-    margin: 0 15px;
+    margin: 10px 0;
 }
 .nav ul li a {
     font-size: 18px;
     color: #333;
     font-weight: bold;
+    display: block;
+    padding: 10px;
 }
 .nav ul li a:hover {
     color: #007bff;
@@ -82,16 +87,19 @@ a:hover {
     margin-top: 15px;
 }
 img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 10px 0;
-}
-.main-image {
     display: block;
-    margin: 0 auto;
     max-width: 800px;
     width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 10px auto;
+    object-fit: cover;
+}
+.main-image {
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
 }
 button {
     padding: 10px 20px;
@@ -106,7 +114,7 @@ button:hover {
 }
 .back-to-top {
     display: inline-block;
-    margin-top: 20px;
+    margin: 20px 0;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -116,4 +124,34 @@ button:hover {
 .back-to-top:hover {
     background-color: #0056b3;
     text-decoration: none;
+}
+
+/* Медиа-запрос для десктопов (ширина > 600px) */
+@media (min-width: 600px) {
+    body {
+        margin: 40px;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h2 {
+        font-size: 24px;
+    }
+    h3 {
+        font-size: 20px;
+    }
+    .section {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .nav ul {
+        display: flex;
+        justify-content: center;
+    }
+    .nav ul li {
+        margin: 0 15px;
+    }
+    .nav ul li a {
+        padding: 5px;
+    }
 }
