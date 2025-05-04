@@ -87,6 +87,12 @@ img {
     border-radius: 8px;
     margin: 10px 0;
 }
+.main-image {
+    display: block;
+    margin: 0 auto;
+    max-width: 800px;
+    width: 100%;
+}
 button {
     padding: 10px 20px;
     background-color: #007bff;
